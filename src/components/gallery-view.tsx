@@ -38,18 +38,19 @@ export function GalleryView({ images }: { images: string[] }) {
     <div className="mx-auto max-w-5xl px-4 py-12">
       <p className="kicker mb-8">{t("navGallery")}</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
-        {tiles.map((src) => (
+        {tiles.map((src, i) => (
           <button
             key={src}
             type="button"
             onClick={() => setActive(src)}
-            className="focus-ring relative aspect-[3/4] overflow-hidden bg-elev"
+            className="gallery-tile focus-ring relative aspect-[3/4] overflow-hidden rounded-none bg-elev"
           >
             <Image
               src={src}
               alt=""
               fill
               sizes="(max-width: 640px) 50vw, 33vw"
+              priority={i < 4}
               className="gallery-shot object-cover transition-transform duration-700 hover:scale-[1.04]"
             />
           </button>
@@ -58,7 +59,7 @@ export function GalleryView({ images }: { images: string[] }) {
 
       {active ? (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1c140c]/92 p-4 backdrop-blur-sm"
+          className="gallery-lightbox fixed inset-0 z-[60] flex flex-col items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
           onClick={() => setActive(null)}
@@ -66,6 +67,7 @@ export function GalleryView({ images }: { images: string[] }) {
           <div className="relative h-[86svh] w-full max-w-lg">
             <Image src={active} alt="" fill sizes="100vw" className="gallery-shot object-contain" />
           </div>
+          <p className="gallery-lightbox-hint">Close · Esc</p>
         </div>
       ) : null}
     </div>

@@ -7,7 +7,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <>
       <div className="shop-wash" aria-hidden="true" />
       <Header />
-      <main className="relative z-10">{children}</main>
+      <main className="relative z-10 pb-24 md:pb-0">{children}</main>
       <Footer />
       <StickyCta />
     </>

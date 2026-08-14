@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { Lang } from "@/lib/types";
 import { dict, type DictKey } from "@/lib/copy";
 
-const KEY = "fade22-lang";
+const KEY = "adaycutz-lang";
 
 type Ctx = {
   lang: Lang;

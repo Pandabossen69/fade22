@@ -108,15 +108,14 @@ export function BookForm({ initialService }: { initialService?: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-10">
-      <p className="kicker mb-2">{t("navBook")}</p>
-      <div className="hairline mb-8" />
+    <div className="mx-auto max-w-lg px-4 py-12">
+      <p className="kicker mb-8">{t("navBook")}</p>
 
       {step === 1 ? (
         <div>
           <p className="mb-4 text-sm text-muted">{t("labelService")}</p>
-          <ul className="space-y-2">
-            {services.map((s) => (
+          <ul className="grid gap-3">
+            {services.map((s, i) => (
               <li key={s.id}>
                 <button
                   type="button"
@@ -124,13 +123,20 @@ export function BookForm({ initialService }: { initialService?: string }) {
                     setServiceId(s.id);
                     setStep(2);
                   }}
-                  className="focus-ring flex w-full items-baseline justify-between gap-3 border border-line bg-bg2 px-4 py-4 text-left hover:border-gold"
+                  className="focus-ring flex w-full items-center justify-between gap-3 border border-line bg-bg2 px-5 py-5 text-left transition-colors hover:border-gold/55 hover:bg-elev"
                 >
-                  <span>
-                    <span className="block">{lang === "en" ? s.nameEn : s.nameTh}</span>
-                    <span className="text-[11px] text-dim">{s.durationMin} {t("minutes")}</span>
+                  <span className="flex min-w-0 items-baseline gap-4">
+                    <span className="hidden w-6 shrink-0 font-mono text-[11px] tabular-nums text-dim sm:inline">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>
+                      <span className="block text-lg leading-tight">{lang === "en" ? s.nameEn : s.nameTh}</span>
+                      <span className="mt-1 block text-[12px] text-dim">
+                        {s.durationMin} {t("minutes")}
+                      </span>
+                    </span>
                   </span>
-                  <span className="tabular-nums text-gold">฿{s.priceThb}</span>
+                  <span className="shrink-0 text-lg tabular-nums text-gold">฿{s.priceThb}</span>
                 </button>
               </li>
             ))}
@@ -140,7 +146,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
 
       {step === 2 && service ? (
         <div>
-          <button type="button" className="mb-4 text-[11px] tracking-[0.16em] uppercase text-gold" onClick={() => setStep(1)}>
+          <button type="button" className="mb-6 text-[11px] tracking-[0.16em] uppercase text-gold" onClick={() => setStep(1)}>
             {lang === "en" ? service.nameEn : service.nameTh} · ฿{service.priceThb}
           </button>
           <p className="mb-3 text-sm text-muted">{t("labelDate")}</p>
@@ -151,7 +157,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
                 type="button"
                 onClick={() => setDate(d)}
                 className={`focus-ring min-w-[3.4rem] border px-2 py-3 text-center ${
-                  date === d ? "border-gold bg-gold text-black" : "border-line text-muted"
+                  date === d ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-muted"
                 }`}
               >
                 <span className="block text-[10px] tracking-[0.12em] uppercase">{weekday(d, lang)}</span>
@@ -170,7 +176,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
                   setStep(3);
                 }}
                 className={`focus-ring border py-3 text-sm tabular-nums ${
-                  time === hm ? "border-gold bg-gold text-black" : "border-line text-ink hover:border-gold"
+                  time === hm ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-ink hover:border-gold"
                 }`}
               >
                 {hm}

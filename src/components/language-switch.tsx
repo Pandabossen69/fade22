@@ -32,7 +32,7 @@ export function LanguageSwitch() {
         type="button"
         onClick={() => setLang("th")}
         className={`focus-ring flex items-center gap-1 px-1 py-1 text-[11px] tracking-[0.14em] ${
-          lang === "th" ? "text-gold2" : "text-muted"
+          lang === "th" ? "text-ink" : "text-muted"
         }`}
         aria-pressed={lang === "th"}
         aria-label="TH"
@@ -45,7 +45,7 @@ export function LanguageSwitch() {
         type="button"
         onClick={() => setLang("en")}
         className={`focus-ring flex items-center gap-1 px-1 py-1 text-[11px] tracking-[0.14em] ${
-          lang === "en" ? "text-gold2" : "text-muted"
+          lang === "en" ? "text-ink" : "text-muted"
         }`}
         aria-pressed={lang === "en"}
         aria-label="EN"

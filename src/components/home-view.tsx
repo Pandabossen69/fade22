@@ -3,76 +3,95 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "./language-context";
+import { ContactStrip } from "./contact-strip";
+import { Reveal } from "./reveal";
 import { site } from "@/lib/site";
 import { services } from "@/lib/services";
 
 export function HomeView() {
   const { t, lang } = useLang();
-  const brand = lang === "en" ? site.nameEn : site.nameTh;
 
   return (
     <div>
       <section className="relative min-h-[100svh] overflow-hidden">
         <Image
-          src="/gallery/hero-mobile.jpg"
+          src="/gallery/hero-shop.jpg"
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover md:hidden"
+          className="object-cover object-[center_42%] md:hidden"
         />
         <Image
-          src="/gallery/hero-1.jpg"
+          src="/gallery/hero-interior.jpg"
           alt=""
           fill
           sizes="100vw"
-          className="hidden object-cover md:block"
+          className="hidden object-cover object-[center_20%] md:block"
         />
         <div className="hero-scrim absolute inset-0" />
-        <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col justify-end px-4 pb-28 pt-24 md:pb-16">
-          <p className="kicker mb-4">{t("hours")}</p>
-          <h1 className={lang === "en" ? "wordmark text-[16vw] leading-[0.85] text-ink sm:text-8xl md:text-9xl" : "text-[18vw] font-medium leading-[0.9] tracking-tight text-ink sm:text-8xl md:text-9xl"}>
-            {brand}
+        <div className="hero-copy relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col justify-end px-4 pb-16 pt-24">
+          <p className="kicker mb-5">{t("hours")}</p>
+          <h1 className="wordmark text-[10.5vw] leading-[0.92] text-ink sm:text-6xl md:text-7xl">
+            A DAY <span className="text-gold">CUTZ</span>
           </h1>
-          <div className="hairline my-6 max-w-md" />
-          <p className="max-w-sm text-xl leading-snug text-gold2 sm:text-2xl">{t("hero")}</p>
+          <p className="mt-3 text-base text-muted">
+            {lang === "en" ? site.addressEn : site.lineTh}
+          </p>
+          <p className="mt-5 max-w-sm text-xl leading-snug text-ink sm:text-2xl">{t("hero")}</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{t("sub")}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-9 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
             <Link
               href="/book"
-              className="focus-ring flex h-12 items-center justify-center bg-gold px-8 text-[13px] tracking-[0.22em] uppercase text-black"
+              data-hero-cta
+              className="focus-ring flex h-12 items-center justify-center bg-gold px-10 text-[13px] tracking-[0.22em] uppercase text-black"
             >
               {t("ctaPrimary")}
             </Link>
             <Link
               href="/gallery"
-              className="focus-ring flex h-12 items-center justify-center border border-gold px-8 text-[13px] tracking-[0.22em] uppercase text-gold2"
+              className="focus-ring flex h-12 items-center justify-center px-2 text-[12px] tracking-[0.2em] uppercase text-muted hover:text-ink"
             >
               {t("ctaSecondary")}
             </Link>
           </div>
-          <p className="mt-8 text-[11px] tracking-[0.18em] uppercase text-dim">{t("hours")}</p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-16">
-        <p className="kicker mb-6">{t("ctaTertiary")}</p>
-        <ul className="divide-y divide-line border-y border-line">
-          {services.map((s) => (
-            <li key={s.id}>
-              <Link
-                href={`/book?service=${s.id}`}
-                className="focus-ring flex items-baseline justify-between gap-4 py-4"
-              >
-                <span className="text-base">
-                  {lang === "en" ? s.nameEn : s.nameTh}
-                </span>
-                <span className="text-sm tabular-nums text-gold">฿{s.priceThb}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <section className="relative mx-auto max-w-5xl px-4 py-20">
+        <Reveal>
+          <p className="kicker mb-8">{t("ctaTertiary")}</p>
+          <ul className="grid gap-3">
+            {services.map((s, i) => (
+              <li key={s.id}>
+                <Link
+                  href={`/book?service=${s.id}`}
+                  className="focus-ring group flex items-center justify-between gap-4 border border-line bg-bg2/90 px-5 py-5 shadow-sm transition-colors hover:border-gold/70"
+                >
+                  <span className="flex min-w-0 items-baseline gap-4">
+                    <span className="hidden w-6 shrink-0 font-mono text-[11px] tabular-nums text-dim sm:inline">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>
+                      <span className="block text-lg leading-tight text-ink">
+                        {lang === "en" ? s.nameEn : s.nameTh}
+                      </span>
+                      <span className="mt-1 block text-[12px] text-dim">
+                        {s.durationMin} {t("minutes")}
+                      </span>
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-lg tabular-nums text-gold2">฿{s.priceThb}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </section>
+
+      <Reveal>
+        <ContactStrip />
+      </Reveal>
     </div>
   );
 }

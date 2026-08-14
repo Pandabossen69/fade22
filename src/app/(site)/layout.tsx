@@ -5,8 +5,9 @@ import { StickyCta } from "@/components/sticky-cta";
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <div className="shop-wash" aria-hidden="true" />
       <Header />
-      <main className="pb-24 md:pb-0">{children}</main>
+      <main className="relative z-10">{children}</main>
       <Footer />
       <StickyCta />
     </>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cinzel, Noto_Sans_Thai } from "next/font/google";
+import { Noto_Sans_Thai } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -11,19 +11,12 @@ const sans = Noto_Sans_Thai({
   display: "swap",
 });
 
-const display = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: {
-    default: `${site.nameEn} / ${site.nameTh}`,
+    default: `${site.nameEn} · Hua Hin`,
     template: `%s · ${site.nameEn}`,
   },
-  description: "Clean fades. Open till late.",
+  description: "Men's barbershop in Hua Hin. Clean fades. Open daily 08:00–21:00.",
   other: {
     google: "notranslate",
   },
@@ -31,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" translate="no" className={`notranslate ${sans.variable} ${display.variable}`}>
+    <html lang="th" translate="no" className={`notranslate ${sans.variable}`}>
       <body className={`${sans.className} antialiased`}>
         <Providers>
           {children}

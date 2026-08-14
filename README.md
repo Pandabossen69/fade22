@@ -1,9 +1,7 @@
-# FADE22 / เฟด22
+# A DAY CUTZ
 
-Barbershop in Thailand. Mobile-first: home, gallery, book a slot.
+Men's barbershop in Hua Hin. Mobile-first: home, gallery, book a slot.
 
 - Thai + English (one-click TH/EN)
-- Hours 10:00-22:00, no double-booking
+- Hours 08:00–21:00, no double-booking
 - Admin at /admin
-
-Vercel project: fade22

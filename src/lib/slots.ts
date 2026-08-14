@@ -41,11 +41,11 @@ export function slotStartsForService(startHm: string, service: Service): string[
 export function isValidStart(startHm: string, service: Service): boolean {
   const starts = new Set(allSlotStarts());
   if (!starts.has(startHm)) return false;
+  const lastStart = hmToMinutes(service.slotCount > 1 ? site.lastSlot45 : site.lastSlot);
+  if (hmToMinutes(startHm) > lastStart) return false;
   const occupied = slotStartsForService(startHm, service);
-  const last = hmToMinutes(site.lastSlot);
   for (const s of occupied) {
     if (!starts.has(s)) return false;
-    if (hmToMinutes(s) > last) return false;
   }
   return true;
 }

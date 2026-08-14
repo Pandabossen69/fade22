@@ -7,7 +7,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
           <p className="kicker">{site.nameEn}</p>
           <form action="/api/admin/logout" method="post">
-            <button type="submit" className="focus-ring text-muted hover:text-gold" aria-label={site.nameEn}>
+            <button type="submit" className="focus-ring text-muted hover:text-gold2" aria-label={site.nameEn}>
               ×
             </button>
           </form>

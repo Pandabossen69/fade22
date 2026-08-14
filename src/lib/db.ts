@@ -51,6 +51,13 @@ export async function upcomingBookings(): Promise<Booking[]> {
     .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
 }
 
+export async function allBookings(): Promise<Booking[]> {
+  const all = await listBookings();
+  return all
+    .slice()
+    .sort((a, b) => `${b.date}T${b.time}`.localeCompare(`${a.date}T${a.time}`));
+}
+
 export async function listStoredReviews(): Promise<Review[]> {
   return jsonListReviews();
 }
@@ -71,4 +78,3 @@ export async function deleteReview(id: string): Promise<boolean> {
 export async function deleteBooking(id: string): Promise<boolean> {
   return jsonDeleteBooking(id);
 }
-

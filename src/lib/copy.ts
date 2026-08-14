@@ -47,6 +47,10 @@ export const dict = {
     slotTaken: "เต็ม",
     adminCancel: "ยกเลิกคิว",
     adminEmpty: "ยังไม่มีคิว",
+    adminHow: "ลูกค้าจองบนเว็บ → คุณได้แจ้งเตือนในโทรศัพท์ → ดูคิวที่นี่ → กดยกเลิกคิวถ้าลูกค้าโทรมายกเลิก",
+    adminThisMonth: "เดือนนี้",
+    adminEmptyToday: "ยังไม่มีคิววันนี้",
+    adminHistory: "คิวย้อนหลัง",
   },
   en: {
     navHome: "Home",
@@ -94,6 +98,10 @@ export const dict = {
     slotTaken: "Booked",
     adminCancel: "Cancel",
     adminEmpty: "No bookings yet",
+    adminHow: "Customer books on the site → you get a phone alert → see the queue here → tap Cancel if they call to cancel.",
+    adminThisMonth: "This month",
+    adminEmptyToday: "No bookings today",
+    adminHistory: "Past bookings",
   },
 } as const;
 

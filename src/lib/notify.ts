@@ -8,15 +8,19 @@ export async function notifyNewBooking(b: Booking): Promise<void> {
 
   try {
     const service = getService(b.serviceId);
-    const svc = service?.nameTh ?? b.serviceId;
+    const svc = service ? `${service.nameTh} / ${service.nameEn}` : b.serviceId;
     const phone = formatPhoneDisplay(b.phone);
-    await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+    const note = b.notes?.trim() ? `\n${b.notes.trim()}` : "";
+    await fetch("https://ntfy.sh", {
       method: "POST",
-      headers: {
-        Title: "A DAY CUTZ · จองคิวใหม่",
-        Priority: "high",
-      },
-      body: `${b.name}  ${phone}\n${svc}  ${b.date}  ${b.time}`,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        topic,
+        title: "A DAY CUTZ  จองคิวใหม่",
+        message: `${b.name}\n${phone}\n${svc}\n${b.date}  ${b.time}${note}`,
+        priority: 4,
+        tags: ["scissors"],
+      }),
     });
   } catch {
     /* never fail the booking */

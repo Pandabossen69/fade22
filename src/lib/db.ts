@@ -1,0 +1,49 @@
+/**
+ * Persistence facade.
+ *
+ * Local `next dev`: JSON file at data/bookings.json (atomic write + 409 on conflict).
+ * Deploy: swap this module to Postgres/Supabase. Keep the same function signatures.
+ *
+ * When DATABASE_URL is set, a future implementation can branch here.
+ */
+import {
+  ConflictError,
+  createBooking as jsonCreate,
+  listBookings as jsonList,
+  takenSlotStarts as jsonTaken,
+} from "./store";
+import { bangkokToday } from "./slots";
+import type { Booking, ServiceId } from "./types";
+
+export type { Booking };
+export { ConflictError };
+
+export async function listBookings(): Promise<Booking[]> {
+  // if (process.env.DATABASE_URL) return supabaseList();
+  return jsonList();
+}
+
+export async function takenSlotStarts(date: string): Promise<string[]> {
+  return jsonTaken(date);
+}
+
+export async function createBooking(input: {
+  name: string;
+  phone: string;
+  serviceId: ServiceId;
+  date: string;
+  time: string;
+  slotStarts: string[];
+  notes: string;
+}): Promise<Booking> {
+  return jsonCreate(input);
+}
+
+export async function upcomingBookings(): Promise<Booking[]> {
+  const today = bangkokToday();
+  const all = await listBookings();
+  return all
+    .filter((b) => b.date >= today)
+    .slice()
+    .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
+}

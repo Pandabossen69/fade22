@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #050505;
+  --bg-2: #0c0b0a;
+  --bg-elev: #141210;
+  --line: rgba(201, 162, 87, 0.22);
+  --line-strong: rgba(212, 175, 98, 0.45);
+  --text: #f3ead7;
+  --muted: #9a8c74;
+  --dim: #6e6456;
+  --gold: #c9a257;
+  --gold-2: #e0c48a;
+  --gold-dim: rgba(201, 162, 87, 0.12);
+  --danger: #c45c5c;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg-2);
+  --color-elev: var(--bg-elev);
+  --color-line: var(--line);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
+  --color-gold: var(--gold);
+  --color-gold2: var(--gold-2);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-sans-body);
+  --font-display: var(--font-display);
+}
+
+* {
+  border-color: var(--line);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans-body), "Noto Sans Thai", ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(201, 162, 87, 0.35);
+  color: #fff8e8;
+}
+
+a {
+  text-underline-offset: 0.18em;
+}
+
+button {
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.wordmark {
+  font-family: var(--font-display), "Cinzel", serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--gold-2);
+  outline-offset: 2px;
+}
+
+.gold-shot-0 {
+  background:
+    radial-gradient(80% 70% at 20% 10%, rgba(201, 162, 87, 0.28), transparent 55%),
+    linear-gradient(160deg, #1a1610 0%, #070705 55%, #2a2216 100%);
+}
+.gold-shot-1 {
+  background:
+    radial-gradient(70% 80% at 80% 20%, rgba(224, 196, 138, 0.22), transparent 50%),
+    linear-gradient(200deg, #0a0908 0%, #1c1812 60%, #050504 100%);
+}
+.gold-shot-2 {
+  background:
+    linear-gradient(135deg, rgba(201, 162, 87, 0.18), transparent 40%),
+    linear-gradient(15deg, #120f0c, #080706 70%, #241c12);
+}
+.gold-shot-3 {
+  background:
+    radial-gradient(60% 50% at 50% 80%, rgba(201, 162, 87, 0.2), transparent 60%),
+    linear-gradient(180deg, #0e0c0a, #050505);
+}
+.gold-shot-4 {
+  background:
+    linear-gradient(45deg, #1b1712 0%, #070706 40%, #2c2418 100%);
+}
+.gold-shot-5 {
+  background:
+    radial-gradient(90% 60% at 10% 90%, rgba(224, 196, 138, 0.16), transparent 55%),
+    linear-gradient(210deg, #090807, #16130f 50%, #0a0908);
+}
+
+.hero-scrim {
+  background:
+    linear-gradient(180deg, rgba(5, 5, 5, 0.35) 0%, rgba(5, 5, 5, 0.55) 40%, rgba(5, 5, 5, 0.92) 100%),
+    radial-gradient(80% 50% at 50% 20%, rgba(201, 162, 87, 0.16), transparent 55%);
+}

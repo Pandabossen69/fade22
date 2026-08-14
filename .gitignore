@@ -1,0 +1,11 @@
+node_modules
+.next
+.env.local
+out
+build
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+ADMIN_PASSWORD.txt
+.vercel
+data/bookings.json

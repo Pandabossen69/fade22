@@ -35,9 +35,9 @@ export function GalleryView({ images }: { images: string[] }) {
   }, [active]);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
+    <div className="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16 lg:py-20">
       <p className="kicker mb-8">{t("navGallery")}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
         {tiles.map((src, i) => (
           <button
             key={src}
@@ -49,7 +49,7 @@ export function GalleryView({ images }: { images: string[] }) {
               src={src}
               alt=""
               fill
-              sizes="(max-width: 640px) 50vw, 33vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority={i < 4}
               className="gallery-shot object-cover transition-transform duration-700 hover:scale-[1.04]"
             />
@@ -64,7 +64,7 @@ export function GalleryView({ images }: { images: string[] }) {
           aria-modal="true"
           onClick={() => setActive(null)}
         >
-          <div className="relative h-[86svh] w-full max-w-lg">
+          <div className="relative h-[86svh] w-full max-w-lg md:max-w-2xl">
             <Image src={active} alt="" fill sizes="100vw" className="gallery-shot object-contain" />
           </div>
           <p className="gallery-lightbox-hint">Close · Esc</p>

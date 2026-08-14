@@ -223,6 +223,16 @@ select {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
+
+.reviews-rail {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reviews-rail::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;

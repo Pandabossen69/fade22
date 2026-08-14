@@ -9,3 +9,4 @@ next-env.d.ts
 ADMIN_PASSWORD.txt
 .vercel
 data/bookings.json
+data/reviews.json

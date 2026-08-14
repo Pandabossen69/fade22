@@ -42,7 +42,7 @@ export function MapPlaceholder() {
       href={site.mapsDirections}
       target="_blank"
       rel="noreferrer"
-      className="focus-ring map-panel relative block aspect-[16/10] w-full overflow-hidden border border-line"
+      className="focus-ring map-panel relative block aspect-[16/10] w-full overflow-hidden border border-line md:aspect-auto md:h-full md:min-h-[280px]"
     >
       <iframe
         src={site.mapsEmbed}
@@ -59,12 +59,14 @@ export function MapPlaceholder() {
 
 export function ContactStrip() {
   return (
-    <section className="relative mx-auto max-w-5xl px-4 py-16">
-      <div className="border border-line bg-bg2/80 px-4 py-2 backdrop-blur-sm sm:px-6">
-        <ContactLinks />
-      </div>
-      <div className="mt-6">
-        <MapPlaceholder />
+    <section className="relative mx-auto max-w-6xl px-4 py-16 md:px-8 md:py-20">
+      <div className="md:grid md:grid-cols-2 md:gap-6">
+        <div className="border border-line bg-bg2/80 px-4 py-2 backdrop-blur-sm sm:px-6 md:flex md:flex-col md:justify-center">
+          <ContactLinks />
+        </div>
+        <div className="mt-6 md:mt-0 md:min-h-[280px]">
+          <MapPlaceholder />
+        </div>
       </div>
     </section>
   );

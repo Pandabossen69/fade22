@@ -26,7 +26,7 @@ function dayNum(date: string): string {
 function StepBar({ step, onBack }: { step: Step; onBack?: () => void }) {
   const { t } = useLang();
   return (
-    <div className="sticky top-14 z-20 -mx-4 mb-8 flex items-center justify-between gap-3 border-b border-line bg-bg/95 px-4 py-2 backdrop-blur-md">
+    <div className="sticky top-14 z-20 -mx-4 mb-8 flex items-center justify-between gap-3 border-b border-line bg-bg/95 px-4 py-2 backdrop-blur-md md:top-16 md:-mx-8 md:px-8">
       {onBack ? (
         <button
           type="button"
@@ -132,163 +132,166 @@ export function BookForm({ initialService }: { initialService?: string }) {
 
   if (done) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16">
-        <p className="kicker mb-4">{t("navBook")}</p>
-        <p className="text-2xl leading-snug text-gold2">{t("success")}</p>
-        <Link
-          href="/"
-          className="focus-ring mt-8 flex h-12 min-w-[8.5rem] items-center justify-center gap-2 border border-line bg-bg2 px-5 text-base font-medium text-ink hover:border-gold/55"
-        >
-          <span aria-hidden="true">←</span>
-          {t("backHome")}
-        </Link>
+      <div className="mx-auto max-w-lg px-4 py-16 md:max-w-2xl md:py-20">
+        <div className="md:border md:border-line md:bg-bg2/80 md:px-8 md:py-10">
+          <p className="kicker mb-4">{t("navBook")}</p>
+          <p className="text-2xl leading-snug text-gold2">{t("success")}</p>
+          <Link
+            href="/"
+            className="focus-ring mt-8 flex h-12 min-w-[8.5rem] items-center justify-center gap-2 border border-line bg-bg2 px-5 text-base font-medium text-ink hover:border-gold/55"
+          >
+            <span aria-hidden="true">←</span>
+            {t("backHome")}
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-12">
+    <div className="mx-auto max-w-lg px-4 py-12 md:max-w-2xl md:py-16">
       <p className="kicker mb-2">{t("navBook")}</p>
-
-      {step === 1 ? (
-        <div>
-          <StepBar step={1} />
-          <p className="mb-4 text-sm text-muted">{t("labelService")}</p>
-          <ul className="grid gap-3">
-            {services.map((s, i) => (
-              <li key={s.id}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setServiceId(s.id);
-                    setStep(2);
-                  }}
-                  className="focus-ring flex w-full items-center justify-between gap-3 border border-line bg-bg2 px-5 py-5 text-left transition-colors hover:border-gold/55 hover:bg-elev"
-                >
-                  <span className="flex min-w-0 items-baseline gap-4">
-                    <span className="hidden w-6 shrink-0 font-mono text-[11px] tabular-nums text-dim sm:inline">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span>
-                      <span className="block text-lg leading-tight">{lang === "en" ? s.nameEn : s.nameTh}</span>
-                      <span className="mt-1 block text-[12px] text-dim">
-                        {s.durationMin} {t("minutes")}
+      <div className="md:border md:border-line md:bg-bg2/80 md:px-8 md:pb-8 md:pt-2">
+        {step === 1 ? (
+          <div>
+            <StepBar step={1} />
+            <p className="mb-4 text-sm text-muted">{t("labelService")}</p>
+            <ul className="grid gap-3">
+              {services.map((s, i) => (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setServiceId(s.id);
+                      setStep(2);
+                    }}
+                    className="focus-ring flex w-full items-center justify-between gap-3 border border-line bg-bg2 px-5 py-5 text-left transition-colors hover:border-gold/55 hover:bg-elev"
+                  >
+                    <span className="flex min-w-0 items-baseline gap-4">
+                      <span className="hidden w-6 shrink-0 font-mono text-[11px] tabular-nums text-dim sm:inline">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span>
+                        <span className="block text-lg leading-tight">{lang === "en" ? s.nameEn : s.nameTh}</span>
+                        <span className="mt-1 block text-[12px] text-dim">
+                          {s.durationMin} {t("minutes")}
+                        </span>
                       </span>
                     </span>
-                  </span>
-                  <span className="shrink-0 text-lg tabular-nums text-gold">฿{s.priceThb}</span>
+                    <span className="shrink-0 text-lg tabular-nums text-gold">฿{s.priceThb}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {step === 2 && service ? (
+          <div>
+            <StepBar step={2} onBack={() => setStep(1)} />
+            <p className="mb-6 text-sm text-muted">
+              {lang === "en" ? service.nameEn : service.nameTh} · ฿{service.priceThb}
+            </p>
+            <p className="mb-3 text-sm text-muted">{t("labelDate")}</p>
+            <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
+              {days.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setDate(d)}
+                  className={`focus-ring min-w-[3.4rem] border px-2 py-3 text-center ${
+                    date === d ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-muted"
+                  }`}
+                >
+                  <span className="block text-[10px] tracking-[0.12em] uppercase">{weekday(d, lang)}</span>
+                  <span className="block text-lg tabular-nums">{dayNum(d)}</span>
                 </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+              ))}
+            </div>
+            <p className="mb-3 text-sm text-muted">{t("labelTime")}</p>
+            <div className="grid grid-cols-4 gap-2 md:grid-cols-6">
+              {slots.map((hm) => (
+                <button
+                  key={hm}
+                  type="button"
+                  onClick={() => {
+                    setTime(hm);
+                    setStep(3);
+                  }}
+                  className={`focus-ring border py-3 text-sm tabular-nums ${
+                    time === hm ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-ink hover:border-gold"
+                  }`}
+                >
+                  {hm}
+                </button>
+              ))}
+            </div>
+            <p className="mt-8 text-[11px] tracking-[0.12em] uppercase text-dim">{t("lateLine")}</p>
+          </div>
+        ) : null}
 
-      {step === 2 && service ? (
-        <div>
-          <StepBar step={2} onBack={() => setStep(1)} />
-          <p className="mb-6 text-sm text-muted">
-            {lang === "en" ? service.nameEn : service.nameTh} · ฿{service.priceThb}
-          </p>
-          <p className="mb-3 text-sm text-muted">{t("labelDate")}</p>
-          <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
-            {days.map((d) => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setDate(d)}
-                className={`focus-ring min-w-[3.4rem] border px-2 py-3 text-center ${
-                  date === d ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-muted"
-                }`}
-              >
-                <span className="block text-[10px] tracking-[0.12em] uppercase">{weekday(d, lang)}</span>
-                <span className="block text-lg tabular-nums">{dayNum(d)}</span>
-              </button>
-            ))}
-          </div>
-          <p className="mb-3 text-sm text-muted">{t("labelTime")}</p>
-          <div className="grid grid-cols-4 gap-2">
-            {slots.map((hm) => (
-              <button
-                key={hm}
-                type="button"
-                onClick={() => {
-                  setTime(hm);
-                  setStep(3);
-                }}
-                className={`focus-ring border py-3 text-sm tabular-nums ${
-                  time === hm ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-ink hover:border-gold"
-                }`}
-              >
-                {hm}
-              </button>
-            ))}
-          </div>
-          <p className="mt-8 text-[11px] tracking-[0.12em] uppercase text-dim">{t("lateLine")}</p>
-        </div>
-      ) : null}
-
-      {step === 3 && service ? (
-        <form onSubmit={submit} className="space-y-5">
-          <StepBar step={3} onBack={() => setStep(2)} />
-          <p className="text-sm text-muted">
-            {lang === "en" ? service.nameEn : service.nameTh} · {date} · {time}
-          </p>
-          <div>
-            <label htmlFor="name" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
-              {t("labelName")}
-            </label>
-            <input
-              id="name"
-              required
-              autoComplete="name"
-              placeholder={t("placeholderName")}
-              className="focus-ring w-full border border-line bg-bg2 px-3 py-3"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="phone" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
-              {t("labelPhone")}
-            </label>
-            <input
-              id="phone"
-              required
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder={t("placeholderPhone")}
-              className="focus-ring w-full border border-line bg-bg2 px-3 py-3 tabular-nums"
-              value={phone}
-              onChange={(e) => setPhone(formatPhoneDisplay(e.target.value))}
-            />
-          </div>
-          <div>
-            <label htmlFor="notes" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
-              {t("labelNotes")}
-            </label>
-            <textarea
-              id="notes"
-              rows={2}
-              placeholder={t("placeholderNotes")}
-              className="focus-ring w-full border border-line bg-bg2 px-3 py-3"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
-          {err ? <p className="h-px bg-danger" /> : null}
-          <button
-            type="submit"
-            disabled={busy}
-            className="focus-ring flex h-12 w-full items-center justify-center bg-gold text-[13px] tracking-[0.22em] uppercase text-black disabled:opacity-40"
-          >
-            {t("submit")}
-          </button>
-          <p id="pdpa" className="pt-4 text-[11px] leading-relaxed text-dim">
-            {t("pdpa")}
-          </p>
-        </form>
-      ) : null}
+        {step === 3 && service ? (
+          <form onSubmit={submit} className="space-y-5">
+            <StepBar step={3} onBack={() => setStep(2)} />
+            <p className="text-sm text-muted">
+              {lang === "en" ? service.nameEn : service.nameTh} · {date} · {time}
+            </p>
+            <div>
+              <label htmlFor="name" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
+                {t("labelName")}
+              </label>
+              <input
+                id="name"
+                required
+                autoComplete="name"
+                placeholder={t("placeholderName")}
+                className="focus-ring w-full border border-line bg-bg2 px-3 py-3"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
+                {t("labelPhone")}
+              </label>
+              <input
+                id="phone"
+                required
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder={t("placeholderPhone")}
+                className="focus-ring w-full border border-line bg-bg2 px-3 py-3 tabular-nums"
+                value={phone}
+                onChange={(e) => setPhone(formatPhoneDisplay(e.target.value))}
+              />
+            </div>
+            <div>
+              <label htmlFor="notes" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
+                {t("labelNotes")}
+              </label>
+              <textarea
+                id="notes"
+                rows={2}
+                placeholder={t("placeholderNotes")}
+                className="focus-ring w-full border border-line bg-bg2 px-3 py-3"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </div>
+            {err ? <p className="h-px bg-danger" /> : null}
+            <button
+              type="submit"
+              disabled={busy}
+              className="focus-ring flex h-12 w-full items-center justify-center bg-gold text-[13px] tracking-[0.22em] uppercase text-black disabled:opacity-40"
+            >
+              {t("submit")}
+            </button>
+            <p id="pdpa" className="pt-4 text-[11px] leading-relaxed text-dim">
+              {t("pdpa")}
+            </p>
+          </form>
+        ) : null}
+      </div>
     </div>
   );
 }

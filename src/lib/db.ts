@@ -11,9 +11,13 @@ import {
   createBooking as jsonCreate,
   listBookings as jsonList,
   takenSlotStarts as jsonTaken,
+  listStoredReviews as jsonListReviews,
+  createReview as jsonCreateReview,
+  deleteReview as jsonDeleteReview,
 } from "./store";
 import { bangkokToday } from "./slots";
 import type { Booking, ServiceId } from "./types";
+import type { Review } from "./reviews";
 
 export type { Booking };
 export { ConflictError };
@@ -46,4 +50,21 @@ export async function upcomingBookings(): Promise<Booking[]> {
     .filter((b) => b.date >= today)
     .slice()
     .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
+}
+
+export async function listStoredReviews(): Promise<Review[]> {
+  return jsonListReviews();
+}
+
+export async function createReview(input: {
+  name: string;
+  quoteTh: string;
+  quoteEn: string;
+  stars: Review["stars"];
+}): Promise<Review> {
+  return jsonCreateReview(input);
+}
+
+export async function deleteReview(id: string): Promise<boolean> {
+  return jsonDeleteReview(id);
 }

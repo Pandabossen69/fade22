@@ -10,12 +10,12 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-bg/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-3 sm:gap-3 sm:px-4">
-        <Link href="/" prefetch className="focus-ring wordmark flex shrink-0 items-center gap-2 text-[10px] text-ink sm:text-[12px]">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-16 md:gap-4 md:px-8">
+        <Link href="/" prefetch className="focus-ring wordmark flex shrink-0 items-center gap-2 text-[10px] text-ink sm:text-[12px] md:text-[13px]">
           <span className="pole" aria-hidden="true" />
           {site.nameEn}
         </Link>
-        <nav className="flex min-w-0 flex-1 items-center justify-end gap-2.5 text-[11px] tracking-[0.12em] uppercase text-muted sm:gap-4 sm:tracking-[0.18em]">
+        <nav className="flex min-w-0 flex-1 items-center justify-end gap-2.5 text-[11px] tracking-[0.12em] uppercase text-muted sm:gap-4 sm:tracking-[0.18em] md:gap-6">
           <Link href="/" prefetch className="focus-ring hover:text-ink">
             {t("navHome")}
           </Link>

@@ -24,11 +24,14 @@ export const metadata: Metadata = {
     template: `%s · ${site.nameEn}`,
   },
   description: "Clean fades. Open till late.",
+  other: {
+    google: "notranslate",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" className={`${sans.variable} ${display.variable}`}>
+    <html lang="th" translate="no" className={`notranslate ${sans.variable} ${display.variable}`}>
       <body className={`${sans.className} antialiased`}>
         <Providers>
           {children}

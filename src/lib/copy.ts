@@ -44,6 +44,9 @@ export const dict = {
     labelStars: "ดาว",
     labelQuoteTh: "ข้อความไทย",
     labelQuoteEn: "ข้อความอังกฤษ",
+    slotTaken: "เต็ม",
+    adminCancel: "ยกเลิกคิว",
+    adminEmpty: "ยังไม่มีคิว",
   },
   en: {
     navHome: "Home",
@@ -88,6 +91,9 @@ export const dict = {
     labelStars: "Stars",
     labelQuoteTh: "Quote (Thai)",
     labelQuoteEn: "Quote (English)",
+    slotTaken: "Booked",
+    adminCancel: "Cancel",
+    adminEmpty: "No bookings yet",
   },
 } as const;
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConflictError, createBooking, takenSlotStarts } from "@/lib/db";
 import { notifyNewBooking } from "@/lib/notify";
-import { availableStarts, isDateString } from "@/lib/slots";
+import { availableStarts, isDateString, listedStarts } from "@/lib/slots";
 import { parseBooking } from "@/lib/validation";
 import { isServiceId } from "@/lib/services";
 import { clientKey, rateLimitOk } from "@/lib/rate-limit";
@@ -16,7 +16,10 @@ export async function GET(req: NextRequest) {
   }
   const taken = new Set(await takenSlotStarts(date));
   if (service && isServiceId(service)) {
-    return NextResponse.json({ available: availableStarts(service, date, taken) });
+    return NextResponse.json({
+      slots: listedStarts(service, date, taken),
+      available: availableStarts(service, date, taken),
+    });
   }
   return NextResponse.json({ taken: [...taken] });
 }

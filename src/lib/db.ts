@@ -12,6 +12,7 @@ import {
   listStoredReviews as jsonListReviews,
   createReview as jsonCreateReview,
   deleteReview as jsonDeleteReview,
+  deleteBooking as jsonDeleteBooking,
 } from "./store";
 import { bangkokToday } from "./slots";
 import type { Booking, ServiceId } from "./types";
@@ -66,3 +67,8 @@ export async function createReview(input: {
 export async function deleteReview(id: string): Promise<boolean> {
   return jsonDeleteReview(id);
 }
+
+export async function deleteBooking(id: string): Promise<boolean> {
+  return jsonDeleteBooking(id);
+}
+

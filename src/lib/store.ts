@@ -247,3 +247,18 @@ export async function deleteReview(id: string): Promise<boolean> {
     return false;
   });
 }
+
+export async function deleteBooking(id: string): Promise<boolean> {
+  return withLock(async () => {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const data = await readBookings();
+      const next = data.bookings.filter((b) => b.id !== id);
+      if (next.length === data.bookings.length) return false;
+      data.bookings = next;
+      await writeBookings(data);
+      const verify = await readBookings();
+      if (!verify.bookings.some((b) => b.id === id)) return true;
+    }
+    return false;
+  });
+}

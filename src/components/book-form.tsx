@@ -10,6 +10,15 @@ import type { ServiceId } from "@/lib/types";
 
 type Step = 1 | 2 | 3;
 
+type SlotOption = { time: string; taken: boolean };
+
+function parseSlots(j: { slots?: SlotOption[]; available?: string[] }): SlotOption[] {
+  if (Array.isArray(j.slots)) return j.slots;
+  if (Array.isArray(j.available)) return j.available.map((time) => ({ time, taken: false }));
+  return [];
+}
+
+
 function weekday(date: string, lang: "th" | "en"): string {
   const [y, m, d] = date.split("-").map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
@@ -68,7 +77,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
-  const [slots, setSlots] = useState<string[]>([]);
+  const [slots, setSlots] = useState<SlotOption[]>([]);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState("");
@@ -79,8 +88,8 @@ export function BookForm({ initialService }: { initialService?: string }) {
     setTime("");
     fetch(`/api/bookings?date=${date}&service=${serviceId}`)
       .then((r) => r.json())
-      .then((j: { available?: string[] }) => {
-        if (!ignore) setSlots(Array.isArray(j.available) ? j.available : []);
+      .then((j: { slots?: SlotOption[]; available?: string[] }) => {
+        if (!ignore) setSlots(parseSlots(j));
       })
       .catch(() => {
         if (!ignore) setSlots([]);
@@ -114,7 +123,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
         setErr("409");
         setStep(2);
         const j = await fetch(`/api/bookings?date=${date}&service=${serviceId}`).then((r) => r.json());
-        setSlots(Array.isArray(j.available) ? j.available : []);
+        setSlots(parseSlots(j));
         setTime("");
         return;
       }
@@ -210,21 +219,35 @@ export function BookForm({ initialService }: { initialService?: string }) {
             </div>
             <p className="mb-3 text-sm text-muted">{t("labelTime")}</p>
             <div className="grid grid-cols-4 gap-2 md:grid-cols-6">
-              {slots.map((hm) => (
-                <button
-                  key={hm}
-                  type="button"
-                  onClick={() => {
-                    setTime(hm);
-                    setStep(3);
-                  }}
-                  className={`focus-ring border py-3 text-sm tabular-nums ${
-                    time === hm ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-ink hover:border-gold"
-                  }`}
-                >
-                  {hm}
-                </button>
-              ))}
+              {slots.map((slot) =>
+                slot.taken ? (
+                  <button
+                    key={slot.time}
+                    type="button"
+                    disabled
+                    className="cursor-not-allowed border border-line bg-bg py-2 text-sm tabular-nums text-dim opacity-50"
+                  >
+                    <span className="block line-through">{slot.time}</span>
+                    <span className="mt-0.5 block text-[9px] tracking-[0.08em] uppercase no-underline opacity-90">
+                      {t("slotTaken")}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    key={slot.time}
+                    type="button"
+                    onClick={() => {
+                      setTime(slot.time);
+                      setStep(3);
+                    }}
+                    className={`focus-ring border py-3 text-sm tabular-nums ${
+                      time === slot.time ? "border-gold bg-gold text-black" : "border-line bg-bg2 text-ink hover:border-gold"
+                    }`}
+                  >
+                    {slot.time}
+                  </button>
+                ),
+              )}
             </div>
             <p className="mt-8 text-[11px] tracking-[0.12em] uppercase text-dim">{t("lateLine")}</p>
           </div>

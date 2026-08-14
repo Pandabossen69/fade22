@@ -117,3 +117,18 @@ export function availableStarts(
     return slotStartsForService(start, service).every((s) => !taken.has(s));
   });
 }
+
+export function listedStarts(
+  serviceId: string,
+  date: string,
+  taken: Set<string>,
+): { time: string; taken: boolean }[] {
+  const service = getService(serviceId);
+  if (!service || dateInPast(date)) return [];
+  return allSlotStarts()
+    .filter((start) => isValidStart(start, service) && !slotInPast(date, start))
+    .map((start) => ({
+      time: start,
+      taken: slotStartsForService(start, service).some((s) => taken.has(s)),
+    }));
+}

@@ -20,6 +20,9 @@ function withLock<T>(fn: () => Promise<T>): Promise<T> {
 
 type FileShape = { bookings: Booking[] };
 type ReviewsFileShape = { reviews: Review[] };
+type RawRead = { text: string | null; etag?: string };
+type BookingsState = FileShape & { etag?: string };
+type ReviewsState = ReviewsFileShape & { etag?: string };
 
 function useBlobStore(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL);
@@ -28,29 +31,52 @@ function useBlobStore(): boolean {
 const blobPutOpts = {
   access: "private" as const,
   addRandomSuffix: false,
-  allowOverwrite: true,
   contentType: "application/json",
   cacheControlMaxAge: 60,
 };
+
+function errName(err: unknown): string {
+  return err && typeof err === "object" && "name" in err ? String((err as { name: string }).name) : "";
+}
+
+function isBlobNotFound(err: unknown): boolean {
+  return errName(err) === "BlobNotFoundError";
+}
+
+function isRetryableWrite(err: unknown): boolean {
+  const name = errName(err);
+  if (name === "BlobPreconditionFailedError") return true;
+  const msg = err instanceof Error ? err.message : "";
+  return /precondition|already exists|cannot overwrite|409/i.test(`${name} ${msg}`);
+}
 
 async function streamText(stream: ReadableStream<Uint8Array>): Promise<string> {
   return await new Response(stream).text();
 }
 
-async function blobRead(pathname: string): Promise<string | null> {
+async function blobRead(pathname: string): Promise<RawRead> {
+  const { get } = await import("@vercel/blob");
+  let result: Awaited<ReturnType<typeof get>>;
   try {
-    const { get } = await import("@vercel/blob");
-    const result = await get(pathname, { access: "private", useCache: false });
-    if (!result || result.statusCode !== 200 || !result.stream) return null;
-    return await streamText(result.stream);
-  } catch {
-    return null;
+    result = await get(pathname, { access: "private", useCache: false });
+  } catch (err) {
+    if (isBlobNotFound(err)) return { text: null };
+    throw err;
   }
+  if (!result) return { text: null };
+  if (result.statusCode !== 200 || !result.stream) {
+    throw new Error(`blob get ${pathname} status ${result.statusCode}`);
+  }
+  return { text: await streamText(result.stream), etag: result.blob.etag };
 }
 
-async function blobWrite(pathname: string, body: string): Promise<void> {
+async function blobWrite(pathname: string, body: string, etag?: string): Promise<void> {
   const { put } = await import("@vercel/blob");
-  await put(pathname, body, blobPutOpts);
+  await put(pathname, body, {
+    ...blobPutOpts,
+    allowOverwrite: Boolean(etag),
+    ...(etag ? { ifMatch: etag } : {}),
+  });
 }
 
 async function ensureDir(): Promise<void> {
@@ -76,14 +102,14 @@ async function fileWrite(name: string, body: string): Promise<void> {
   await fs.rename(tmp, full);
 }
 
-async function readRaw(name: string): Promise<string | null> {
+async function readRaw(name: string): Promise<RawRead> {
   if (useBlobStore()) return blobRead(name);
-  return fileRead(name);
+  return { text: await fileRead(name) };
 }
 
-async function writeRaw(name: string, body: string): Promise<void> {
+async function writeRaw(name: string, body: string, etag?: string): Promise<void> {
   if (useBlobStore()) {
-    await blobWrite(name, body);
+    await blobWrite(name, body, etag);
     return;
   }
   await fileWrite(name, body);
@@ -111,20 +137,22 @@ function parseReviews(raw: string | null): ReviewsFileShape {
   }
 }
 
-async function readBookings(): Promise<FileShape> {
-  return parseBookings(await readRaw(bookingsFile));
+async function readBookings(): Promise<BookingsState> {
+  const raw = await readRaw(bookingsFile);
+  return { ...parseBookings(raw.text), etag: raw.etag };
 }
 
-async function writeBookings(data: FileShape): Promise<void> {
-  await writeRaw(bookingsFile, JSON.stringify(data, null, 2) + "\n");
+async function writeBookings(data: BookingsState): Promise<void> {
+  await writeRaw(bookingsFile, JSON.stringify({ bookings: data.bookings }, null, 2) + "\n", data.etag);
 }
 
-async function readReviews(): Promise<ReviewsFileShape> {
-  return parseReviews(await readRaw(reviewsFile));
+async function readReviews(): Promise<ReviewsState> {
+  const raw = await readRaw(reviewsFile);
+  return { ...parseReviews(raw.text), etag: raw.etag };
 }
 
-async function writeReviews(data: ReviewsFileShape): Promise<void> {
-  await writeRaw(reviewsFile, JSON.stringify(data, null, 2) + "\n");
+async function writeReviews(data: ReviewsState): Promise<void> {
+  await writeRaw(reviewsFile, JSON.stringify({ reviews: data.reviews }, null, 2) + "\n", data.etag);
 }
 
 function overlaps(bookings: Booking[], date: string, slotStarts: string[], exceptId?: string): boolean {
@@ -185,11 +213,22 @@ export async function createBooking(input: {
 
     for (let attempt = 0; attempt < 5; attempt++) {
       const data = await readBookings();
+      if (data.bookings.some((b) => b.id === booking.id)) {
+        if (overlaps(data.bookings, input.date, input.slotStarts, booking.id)) {
+          throw new ConflictError();
+        }
+        return booking;
+      }
       if (overlaps(data.bookings, input.date, input.slotStarts)) {
         throw new ConflictError();
       }
       data.bookings.push(booking);
-      await writeBookings(data);
+      try {
+        await writeBookings(data);
+      } catch (err) {
+        if (isRetryableWrite(err)) continue;
+        throw err;
+      }
 
       const verify = await readBookings();
       const mine = verify.bookings.some((b) => b.id === booking.id);
@@ -224,8 +263,14 @@ export async function createReview(input: {
     };
     for (let attempt = 0; attempt < 5; attempt++) {
       const data = await readReviews();
+      if (data.reviews.some((r) => r.id === review.id)) return review;
       data.reviews.unshift(review);
-      await writeReviews(data);
+      try {
+        await writeReviews(data);
+      } catch (err) {
+        if (isRetryableWrite(err)) continue;
+        throw err;
+      }
       const verify = await readReviews();
       if (verify.reviews.some((r) => r.id === review.id)) return review;
     }
@@ -240,7 +285,12 @@ export async function deleteReview(id: string): Promise<boolean> {
       const next = data.reviews.filter((r) => r.id !== id);
       if (next.length === data.reviews.length) return false;
       data.reviews = next;
-      await writeReviews(data);
+      try {
+        await writeReviews(data);
+      } catch (err) {
+        if (isRetryableWrite(err)) continue;
+        throw err;
+      }
       const verify = await readReviews();
       if (!verify.reviews.some((r) => r.id === id)) return true;
     }
@@ -255,7 +305,12 @@ export async function deleteBooking(id: string): Promise<boolean> {
       const next = data.bookings.filter((b) => b.id !== id);
       if (next.length === data.bookings.length) return false;
       data.bookings = next;
-      await writeBookings(data);
+      try {
+        await writeBookings(data);
+      } catch (err) {
+        if (isRetryableWrite(err)) continue;
+        throw err;
+      }
       const verify = await readBookings();
       if (!verify.bookings.some((b) => b.id === id)) return true;
     }

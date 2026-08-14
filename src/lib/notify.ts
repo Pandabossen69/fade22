@@ -22,6 +22,7 @@ export async function notifyNewBooking(b: Booking): Promise<void> {
         message: `${phone}\n${svc}\n${price}\n${when}`,
         priority: 4,
       }),
+      signal: AbortSignal.timeout(4000),
     });
   } catch {
     /* never fail the booking */

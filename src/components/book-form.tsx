@@ -86,7 +86,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
     if (!serviceId || !date) return;
     let ignore = false;
     setTime("");
-    fetch(`/api/bookings?date=${date}&service=${serviceId}`)
+    fetch(`/api/bookings?date=${date}&service=${serviceId}`, { cache: "no-store" })
       .then((r) => r.json())
       .then((j: { slots?: SlotOption[]; available?: string[] }) => {
         if (!ignore) setSlots(parseSlots(j));
@@ -122,7 +122,7 @@ export function BookForm({ initialService }: { initialService?: string }) {
       if (res.status === 409) {
         setErr("409");
         setStep(2);
-        const j = await fetch(`/api/bookings?date=${date}&service=${serviceId}`).then((r) => r.json());
+        const j = await fetch(`/api/bookings?date=${date}&service=${serviceId}`, { cache: "no-store" }).then((r) => r.json());
         setSlots(parseSlots(j));
         setTime("");
         return;

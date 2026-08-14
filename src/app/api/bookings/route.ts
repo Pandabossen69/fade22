@@ -8,31 +8,36 @@ import { clientKey, rateLimitOk } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
+const noStore = { headers: { "Cache-Control": "private, no-store" } };
+
 export async function GET(req: NextRequest) {
   const date = req.nextUrl.searchParams.get("date") ?? "";
   const service = req.nextUrl.searchParams.get("service") ?? "";
   if (!isDateString(date)) {
-    return NextResponse.json({ error: "date" }, { status: 400 });
+    return NextResponse.json({ error: "date" }, { status: 400, ...noStore });
   }
   const taken = new Set(await takenSlotStarts(date));
   if (service && isServiceId(service)) {
-    return NextResponse.json({
-      slots: listedStarts(service, date, taken),
-      available: availableStarts(service, date, taken),
-    });
+    return NextResponse.json(
+      {
+        slots: listedStarts(service, date, taken),
+        available: availableStarts(service, date, taken),
+      },
+      noStore,
+    );
   }
-  return NextResponse.json({ taken: [...taken] });
+  return NextResponse.json({ taken: [...taken] }, noStore);
 }
 
 export async function POST(req: NextRequest) {
   if (!rateLimitOk(`book:${clientKey(req.headers)}`)) {
-    return NextResponse.json({ error: "rate" }, { status: 429 });
+    return NextResponse.json({ error: "rate" }, { status: 429, ...noStore });
   }
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "invalid" }, { status: 400 });
+    return NextResponse.json({ error: "invalid" }, { status: 400, ...noStore });
   }
   const date =
     body && typeof body === "object" && "date" in body && typeof (body as { date: unknown }).date === "string"
@@ -42,9 +47,9 @@ export async function POST(req: NextRequest) {
   const parsed = parseBooking(body, taken);
   if (!parsed.ok) {
     if (parsed.errors.time === "taken") {
-      return NextResponse.json({ error: "conflict" }, { status: 409 });
+      return NextResponse.json({ error: "conflict" }, { status: 409, ...noStore });
     }
-    return NextResponse.json({ error: "invalid", fields: parsed.errors }, { status: 400 });
+    return NextResponse.json({ error: "invalid", fields: parsed.errors }, { status: 400, ...noStore });
   }
   try {
     const booking = await createBooking({
@@ -52,10 +57,10 @@ export async function POST(req: NextRequest) {
       slotStarts: parsed.slotStarts,
     });
     await notifyNewBooking(booking);
-    return NextResponse.json({ ok: true, id: booking.id });
+    return NextResponse.json({ ok: true, id: booking.id }, noStore);
   } catch (err) {
     if (err instanceof ConflictError) {
-      return NextResponse.json({ error: "conflict" }, { status: 409 });
+      return NextResponse.json({ error: "conflict" }, { status: 409, ...noStore });
     }
     throw err;
   }

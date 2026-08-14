@@ -5,6 +5,8 @@ import type { Review } from "@/lib/reviews";
 
 export const dynamic = "force-dynamic";
 
+const noStore = { headers: { "Cache-Control": "private, no-store" } };
+
 function asStars(n: unknown): Review["stars"] | null {
   const v = Number(n);
   if (v === 1 || v === 2 || v === 3 || v === 4 || v === 5) return v;
@@ -13,7 +15,7 @@ function asStars(n: unknown): Review["stars"] | null {
 
 export async function GET() {
   const reviews = await listStoredReviews();
-  return NextResponse.json({ reviews });
+  return NextResponse.json({ reviews }, noStore);
 }
 
 export async function POST(req: NextRequest) {
@@ -21,10 +23,10 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "invalid" }, { status: 400 });
+    return NextResponse.json({ error: "invalid" }, { status: 400, ...noStore });
   }
   if (!body || typeof body !== "object") {
-    return NextResponse.json({ error: "invalid" }, { status: 400 });
+    return NextResponse.json({ error: "invalid" }, { status: 400, ...noStore });
   }
   const b = body as Record<string, unknown>;
   const name = sanitizeText(b.name, 80);
@@ -32,10 +34,10 @@ export async function POST(req: NextRequest) {
   const quoteEn = sanitizeMultiline(b.quoteEn, 400);
   const stars = asStars(b.stars);
   if (name.length < 2 || !stars) {
-    return NextResponse.json({ error: "invalid" }, { status: 400 });
+    return NextResponse.json({ error: "invalid" }, { status: 400, ...noStore });
   }
   if (!quoteTh && !quoteEn) {
-    return NextResponse.json({ error: "invalid" }, { status: 400 });
+    return NextResponse.json({ error: "invalid" }, { status: 400, ...noStore });
   }
   const review = await createReview({
     name,
@@ -43,13 +45,13 @@ export async function POST(req: NextRequest) {
     quoteEn: quoteEn || quoteTh,
     stars,
   });
-  return NextResponse.json({ ok: true, review });
+  return NextResponse.json({ ok: true, review }, noStore);
 }
 
 export async function DELETE(req: NextRequest) {
   const id = sanitizeText(req.nextUrl.searchParams.get("id") ?? "", 80);
-  if (!id) return NextResponse.json({ error: "invalid" }, { status: 400 });
+  if (!id) return NextResponse.json({ error: "invalid" }, { status: 400, ...noStore });
   const ok = await deleteReview(id);
-  if (!ok) return NextResponse.json({ error: "missing" }, { status: 404 });
-  return NextResponse.json({ ok: true });
+  if (!ok) return NextResponse.json({ error: "missing" }, { status: 404, ...noStore });
+  return NextResponse.json({ ok: true }, noStore);
 }

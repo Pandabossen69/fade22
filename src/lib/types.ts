@@ -1,6 +1,6 @@
 export type Lang = "th" | "en";
 
-export type ServiceId = "fade" | "fade-beard" | "kids" | "beard" | "wash";
+export type ServiceId = "thai" | "foreigner" | "kids" | "wash";
 
 export type Service = {
   id: ServiceId;

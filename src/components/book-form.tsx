@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useLang } from "./language-context";
 import { services } from "@/lib/services";
@@ -20,6 +21,37 @@ function weekday(date: string, lang: "th" | "en"): string {
 
 function dayNum(date: string): string {
   return date.slice(8);
+}
+
+function StepBar({ step, onBack }: { step: Step; onBack?: () => void }) {
+  const { t } = useLang();
+  return (
+    <div className="sticky top-14 z-20 -mx-4 mb-8 flex items-center justify-between gap-3 border-b border-line bg-bg/95 px-4 py-2 backdrop-blur-md">
+      {onBack ? (
+        <button
+          type="button"
+          onClick={onBack}
+          className="focus-ring flex min-h-12 min-w-[8.5rem] items-center gap-2 px-3 text-base font-medium text-ink"
+        >
+          <span aria-hidden="true">←</span>
+          {t("back")}
+        </button>
+      ) : (
+        <span className="min-h-12 min-w-[8.5rem]" />
+      )}
+      <div className="flex items-center gap-3">
+        <span className="tabular-nums text-sm text-muted">{step} / 3</span>
+        <span className="flex gap-1.5" aria-hidden="true">
+          {([1, 2, 3] as const).map((n) => (
+            <span
+              key={n}
+              className={`h-2.5 w-2.5 rounded-full ${n === step ? "bg-gold" : n < step ? "bg-gold2" : "bg-line"}`}
+            />
+          ))}
+        </span>
+      </div>
+    </div>
+  );
 }
 
 export function BookForm({ initialService }: { initialService?: string }) {
@@ -103,16 +135,24 @@ export function BookForm({ initialService }: { initialService?: string }) {
       <div className="mx-auto max-w-lg px-4 py-16">
         <p className="kicker mb-4">{t("navBook")}</p>
         <p className="text-2xl leading-snug text-gold2">{t("success")}</p>
+        <Link
+          href="/"
+          className="focus-ring mt-8 flex h-12 min-w-[8.5rem] items-center justify-center gap-2 border border-line bg-bg2 px-5 text-base font-medium text-ink hover:border-gold/55"
+        >
+          <span aria-hidden="true">←</span>
+          {t("backHome")}
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-lg px-4 py-12">
-      <p className="kicker mb-8">{t("navBook")}</p>
+      <p className="kicker mb-2">{t("navBook")}</p>
 
       {step === 1 ? (
         <div>
+          <StepBar step={1} />
           <p className="mb-4 text-sm text-muted">{t("labelService")}</p>
           <ul className="grid gap-3">
             {services.map((s, i) => (
@@ -146,9 +186,10 @@ export function BookForm({ initialService }: { initialService?: string }) {
 
       {step === 2 && service ? (
         <div>
-          <button type="button" className="mb-6 text-[11px] tracking-[0.16em] uppercase text-gold" onClick={() => setStep(1)}>
+          <StepBar step={2} onBack={() => setStep(1)} />
+          <p className="mb-6 text-sm text-muted">
             {lang === "en" ? service.nameEn : service.nameTh} · ฿{service.priceThb}
-          </button>
+          </p>
           <p className="mb-3 text-sm text-muted">{t("labelDate")}</p>
           <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
             {days.map((d) => (
@@ -189,9 +230,10 @@ export function BookForm({ initialService }: { initialService?: string }) {
 
       {step === 3 && service ? (
         <form onSubmit={submit} className="space-y-5">
-          <button type="button" className="text-[11px] tracking-[0.16em] uppercase text-gold" onClick={() => setStep(2)}>
-            {date} · {time}
-          </button>
+          <StepBar step={3} onBack={() => setStep(2)} />
+          <p className="text-sm text-muted">
+            {lang === "en" ? service.nameEn : service.nameTh} · {date} · {time}
+          </p>
           <div>
             <label htmlFor="name" className="mb-1 block text-[11px] tracking-[0.14em] uppercase text-muted">
               {t("labelName")}

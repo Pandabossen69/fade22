@@ -50,7 +50,7 @@ export function GalleryView({ images }: { images: string[] }) {
               alt=""
               fill
               sizes="(max-width: 640px) 50vw, 33vw"
-              className="object-cover transition-transform duration-700 hover:scale-[1.04]"
+              className="gallery-shot object-cover transition-transform duration-700 hover:scale-[1.04]"
             />
           </button>
         ))}
@@ -58,13 +58,13 @@ export function GalleryView({ images }: { images: string[] }) {
 
       {active ? (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-white/96 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1c140c]/92 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           onClick={() => setActive(null)}
         >
           <div className="relative h-[86svh] w-full max-w-lg">
-            <Image src={active} alt="" fill sizes="100vw" className="object-contain" />
+            <Image src={active} alt="" fill sizes="100vw" className="gallery-shot object-contain" />
           </div>
         </div>
       ) : null}

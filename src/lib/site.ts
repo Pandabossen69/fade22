@@ -11,7 +11,9 @@ export const site = {
   phoneDisplay: "080-026-9720",
   phoneTel: "+66800269720",
   email: "hello@adaycutz.com",
-  addressTh: "หัวหิน",
-  addressEn: "Hua Hin, Thailand",
-  mapsUrl: "" as string,
+  addressTh: "695/3 ต.ทับใต้ อ.หัวหิน (ข้าง ตม.หัวหิน) 77110",
+  addressEn: "695/3 Thap Tai, Hua Hin (next to Immigration) 77110",
+  mapsPlace: "https://maps.app.goo.gl/3oPTjouvU7eDK2p76?g_st=ic",
+  mapsEmbed: "https://maps.google.com/maps?q=12.5508063,99.8990904&z=16&output=embed",
+  mapsDirections: "https://www.google.com/maps/dir/?api=1&destination=12.5508063,99.8990904&travelmode=driving",
 } as const;

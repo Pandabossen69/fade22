@@ -9,7 +9,7 @@ export function Header() {
   const { t } = useLang();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/80 bg-white/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-line/80 bg-bg/85 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-3 sm:gap-3 sm:px-4">
         <Link href="/" className="focus-ring wordmark flex shrink-0 items-center gap-2 text-[10px] text-ink sm:text-[12px]">
           <span className="pole" aria-hidden="true" />

@@ -33,6 +33,9 @@ export const dict = {
     contactPhone: "โทร",
     contactEmail: "อีเมล",
     contactAddress: "ที่อยู่",
+    contactDirections: "เส้นทาง",
+    back: "ย้อนกลับ",
+    backHome: "กลับหน้าแรก",
   },
   en: {
     navHome: "Home",
@@ -66,6 +69,9 @@ export const dict = {
     contactPhone: "Phone",
     contactEmail: "Email",
     contactAddress: "Address",
+    contactDirections: "Directions",
+    back: "Back",
+    backHome: "Back to home",
   },
 } as const;
 

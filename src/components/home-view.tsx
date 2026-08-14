@@ -32,14 +32,14 @@ export function HomeView() {
         <div className="hero-scrim absolute inset-0" />
         <div className="hero-copy relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col justify-end px-4 pb-16 pt-24">
           <p className="kicker mb-5">{t("hours")}</p>
-          <h1 className="wordmark text-[10.5vw] leading-[0.92] text-ink sm:text-6xl md:text-7xl">
+          <h1 className="wordmark text-[10.5vw] leading-[0.92] text-[#f7f1e8] sm:text-6xl md:text-7xl">
             A DAY <span className="text-gold">CUTZ</span>
           </h1>
-          <p className="mt-3 text-base text-muted">
+          <p className="mt-3 text-base text-[#e8d9c4]">
             {lang === "en" ? site.addressEn : site.lineTh}
           </p>
-          <p className="mt-5 max-w-sm text-xl leading-snug text-ink sm:text-2xl">{t("hero")}</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{t("sub")}</p>
+          <p className="mt-5 max-w-sm text-xl leading-snug text-[#f7f1e8] sm:text-2xl">{t("hero")}</p>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#d4c4ae]">{t("sub")}</p>
           <div className="mt-9 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
             <Link
               href="/book"
@@ -50,7 +50,7 @@ export function HomeView() {
             </Link>
             <Link
               href="/gallery"
-              className="focus-ring flex h-12 items-center justify-center px-2 text-[12px] tracking-[0.2em] uppercase text-muted hover:text-ink"
+              className="focus-ring flex h-12 items-center justify-center px-2 text-[12px] tracking-[0.2em] uppercase text-[#e8d9c4] hover:text-[#f7f1e8]"
             >
               {t("ctaSecondary")}
             </Link>

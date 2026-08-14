@@ -25,55 +25,42 @@ export function ContactLinks({ compact = false }: { compact?: boolean }) {
         </a>
       </li>
       <li>
-        <div className={row}>
+        <a href={site.mapsDirections} target="_blank" rel="noreferrer" className={row}>
           <span className="kicker">{t("contactAddress")}</span>
           <span className="text-right text-muted">{address}</span>
-        </div>
+        </a>
       </li>
     </ul>
   );
 }
 
 export function MapPlaceholder() {
-  const { t, lang } = useLang();
-  const address = lang === "en" ? site.addressEn : site.addressTh;
-  const inner = (
-    <div className="map-panel relative flex aspect-[16/10] flex-col items-center justify-center overflow-hidden border border-line">
-      <div className="pointer-events-none absolute inset-0 opacity-50">
-        <div className="absolute left-[18%] right-[18%] top-[28%] h-px bg-ink/10" />
-        <div className="absolute bottom-[30%] left-[12%] right-[12%] h-px bg-ink/10" />
-        <div className="absolute bottom-[22%] top-[22%] left-[32%] w-px bg-ink/10" />
-        <div className="absolute bottom-[18%] top-[18%] right-[40%] w-px bg-ink/8" />
-      </div>
-      <span className="relative mb-3 flex h-10 w-10 items-center justify-center border border-line text-gold2">
-        <svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
-          <path
-            d="M7 0C3.4 0 .5 2.9.5 6.5c0 4.9 6.5 11.5 6.5 11.5S13.5 11.4 13.5 6.5C13.5 2.9 10.6 0 7 0Z"
-            stroke="currentColor"
-            strokeWidth="1.2"
-          />
-          <circle cx="7" cy="6.5" r="2" fill="currentColor" />
-        </svg>
-      </span>
-      <p className="relative kicker mb-2">{t("contactAddress")}</p>
-      <p className="relative text-sm text-muted">{address}</p>
-    </div>
-  );
+  const { t } = useLang();
 
-  if (site.mapsUrl) {
-    return (
-      <a href={site.mapsUrl} target="_blank" rel="noreferrer" className="focus-ring block">
-        {inner}
-      </a>
-    );
-  }
-  return inner;
+  return (
+    <a
+      href={site.mapsDirections}
+      target="_blank"
+      rel="noreferrer"
+      className="focus-ring map-panel relative block aspect-[16/10] w-full overflow-hidden border border-line"
+    >
+      <iframe
+        src={site.mapsEmbed}
+        title={t("contactAddress")}
+        loading="lazy"
+        className="pointer-events-none h-full w-full border-0"
+      />
+      <span className="pointer-events-none absolute bottom-3 right-3 bg-gold px-3 py-1.5 text-[11px] font-semibold tracking-[0.16em] uppercase text-black">
+        {t("contactDirections")}
+      </span>
+    </a>
+  );
 }
 
 export function ContactStrip() {
   return (
     <section className="relative mx-auto max-w-5xl px-4 py-16">
-      <div className="border border-line bg-white/80 px-4 py-2 backdrop-blur-sm sm:px-6">
+      <div className="border border-line bg-bg2/80 px-4 py-2 backdrop-blur-sm sm:px-6">
         <ContactLinks />
       </div>
       <div className="mt-6">

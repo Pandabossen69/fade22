@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: `${site.nameEn} · Hua Hin`,
     template: `%s · ${site.nameEn}`,
   },
-  description: "Men's barbershop in Hua Hin. Clean fades. Open daily 08:00–21:00.",
+  description: "Men's barbershop in Thap Tai, Hua Hin. Open daily 08:00–21:00.",
   other: {
     google: "notranslate",
   },

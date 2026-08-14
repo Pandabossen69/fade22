@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f4f6f8;
-  --bg-2: #ffffff;
-  --bg-elev: #ffffff;
-  --line: rgba(17, 24, 32, 0.1);
-  --line-strong: rgba(17, 24, 32, 0.22);
-  --text: #14181d;
-  --muted: #5c6670;
-  --dim: #8b949c;
+  --bg: #f7f1e8;
+  --bg-2: #fffaf2;
+  --bg-elev: #fffdf8;
+  --line: rgba(74, 52, 32, 0.12);
+  --line-strong: rgba(74, 52, 32, 0.24);
+  --text: #2a2118;
+  --muted: #6e5d4a;
+  --dim: #9a8670;
   --gold: #f0c400;
   --gold-2: #c9a000;
-  --gold-dim: rgba(240, 196, 0, 0.16);
+  --gold-dim: rgba(240, 196, 0, 0.18);
   --danger: #c45c5c;
   --pole-red: #d61f26;
   --pole-blue: #1d4ed8;
@@ -52,7 +52,7 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: #f4f6f8;
+  background: #f7f1e8;
 }
 
 .shop-wash::before {
@@ -60,22 +60,22 @@ body {
   position: absolute;
   inset: -10%;
   background: url("/gallery/hero-interior.jpg") center 22% / cover no-repeat;
-  filter: blur(36px) saturate(0.75) brightness(1.28);
-  opacity: 0.34;
+  filter: blur(36px) saturate(0.85) brightness(1.18);
+  opacity: 0.28;
 }
 
 .shop-wash::after {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.055;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='73' viewBox='0 0 84 73'%3E%3Cpath fill='none' stroke='%2311181d' stroke-width='1.2' d='M21 1 L42 13 L42 37 L21 49 L0 37 L0 13 Z M63 1 L84 13 L84 37 L63 49 L42 37 L42 13 Z M42 37 L63 49 L63 73 L42 73 L21 73 L21 49 Z'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='73' viewBox='0 0 84 73'%3E%3Cpath fill='none' stroke='%23c9a000' stroke-width='1.2' d='M21 1 L42 13 L42 37 L21 49 L0 37 L0 13 Z M63 1 L84 13 L84 37 L63 49 L42 37 L42 13 Z M42 37 L63 49 L63 73 L42 73 L21 73 L21 49 Z'/%3E%3C/svg%3E");
   background-size: 84px 73px;
 }
 
 ::selection {
   background: rgba(240, 196, 0, 0.35);
-  color: #14181d;
+  color: #2a2118;
 }
 
 a {
@@ -114,11 +114,22 @@ select {
 
 .hero-scrim {
   background:
-    linear-gradient(180deg, rgba(244, 246, 248, 0.2) 0%, rgba(244, 246, 248, 0.05) 28%, rgba(244, 246, 248, 0.55) 62%, #f4f6f8 100%);
+    linear-gradient(
+      180deg,
+      rgba(42, 28, 16, 0.58) 0%,
+      rgba(42, 28, 16, 0.38) 28%,
+      rgba(42, 28, 16, 0.52) 58%,
+      rgba(42, 28, 16, 0.74) 90%,
+      #f7f1e8 100%
+    );
 }
 
 .hero-copy {
   animation: fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.gallery-shot {
+  filter: contrast(1.06) saturate(1.04);
 }
 
 .reveal {
@@ -134,8 +145,8 @@ select {
 
 .map-panel {
   background:
-    radial-gradient(ellipse at 50% 42%, rgba(240, 196, 0, 0.12), transparent 42%),
-    linear-gradient(165deg, #eef1f4 0%, #ffffff 55%, #e7ebef 100%);
+    radial-gradient(ellipse at 50% 42%, rgba(240, 196, 0, 0.16), transparent 42%),
+    linear-gradient(165deg, #f3e8d4 0%, #fffaf2 55%, #eadfcb 100%);
 }
 
 .pole {

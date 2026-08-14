@@ -12,7 +12,7 @@ export function Footer() {
   const stickyPad = path === "/book" || path.startsWith("/admin") ? "pb-10" : "pb-24 md:pb-10";
 
   return (
-    <footer className={`relative z-10 border-t border-line bg-white/70 px-4 pt-12 backdrop-blur-md ${stickyPad}`}>
+    <footer className={`relative z-10 border-t border-line bg-bg/80 px-4 pt-12 backdrop-blur-md ${stickyPad}`}>
       <div className="mx-auto flex max-w-5xl flex-col gap-8">
         <div>
           <p className="wordmark flex items-center gap-2 text-sm text-ink">

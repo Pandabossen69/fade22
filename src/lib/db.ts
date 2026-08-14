@@ -2,9 +2,7 @@
  * Persistence facade.
  *
  * Local `next dev`: JSON file at data/bookings.json (atomic write + 409 on conflict).
- * Deploy: swap this module to Postgres/Supabase. Keep the same function signatures.
- *
- * When DATABASE_URL is set, a future implementation can branch here.
+ * On Vercel: bookings.json / reviews.json in private Blob (BLOB_READ_WRITE_TOKEN).
  */
 import {
   ConflictError,

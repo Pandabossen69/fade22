@@ -23,7 +23,7 @@ export function HomeView() {
           className="object-cover object-[center_35%]"
         />
         <div className="hero-scrim absolute inset-0" />
-        <div className="hero-copy relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-20 pt-24 md:px-8 md:pb-28">
+        <div className="hero-copy relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-24 pt-24 md:px-8 md:pb-28">
           <h1 className="wordmark text-[11vw] leading-[0.92] text-[#f7f1e8] sm:text-6xl md:text-7xl">
             A DAY <span className="text-gold">CUTZ</span>
           </h1>
@@ -39,7 +39,7 @@ export function HomeView() {
             </Link>
             <Link
               href="/gallery"
-              className="focus-ring flex h-14 items-center justify-center border-2 border-[#f7f1e8] bg-black/25 px-10 text-[14px] tracking-[0.22em] uppercase text-[#f7f1e8] backdrop-blur-sm"
+              className="hero-cta-ghost focus-ring flex h-14 items-center justify-center px-10 text-[14px] tracking-[0.22em] uppercase text-[#f7f1e8] backdrop-blur-sm"
             >
               {t("ctaSecondary")}
             </Link>

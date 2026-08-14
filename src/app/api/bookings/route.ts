@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConflictError, createBooking, takenSlotStarts } from "@/lib/db";
+import { notifyNewBooking } from "@/lib/notify";
 import { availableStarts, isDateString } from "@/lib/slots";
 import { parseBooking } from "@/lib/validation";
 import { isServiceId } from "@/lib/services";
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
       ...parsed.data,
       slotStarts: parsed.slotStarts,
     });
+    await notifyNewBooking(booking);
     return NextResponse.json({ ok: true, id: booking.id });
   } catch (err) {
     if (err instanceof ConflictError) {

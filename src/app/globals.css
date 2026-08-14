@@ -128,6 +128,11 @@ select {
   animation: fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.hero-cta-ghost {
+  border: 2px solid #f7f1e8;
+  background: rgba(0, 0, 0, 0.35);
+}
+
 .gallery-shot {
   filter: contrast(1.05) saturate(1.08) sepia(0.08);
 }

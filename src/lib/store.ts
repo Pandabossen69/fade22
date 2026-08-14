@@ -3,9 +3,9 @@ import path from "path";
 import type { Booking, ServiceId } from "./types";
 import type { Review } from "./reviews";
 
-const dataDir = process.env.VERCEL ? "/tmp" : path.join(process.cwd(), "data");
-const fileName = "bookings.json";
-const reviewsFileName = "reviews.json";
+const dataDir = path.join(process.cwd(), "data");
+const bookingsFile = "bookings.json";
+const reviewsFile = "reviews.json";
 
 let chain: Promise<unknown> = Promise.resolve();
 
@@ -21,54 +21,122 @@ function withLock<T>(fn: () => Promise<T>): Promise<T> {
 type FileShape = { bookings: Booking[] };
 type ReviewsFileShape = { reviews: Review[] };
 
+function useBlobStore(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL);
+}
+
+const blobPutOpts = {
+  access: "private" as const,
+  addRandomSuffix: false,
+  allowOverwrite: true,
+  contentType: "application/json",
+  cacheControlMaxAge: 60,
+};
+
+async function streamText(stream: ReadableStream<Uint8Array>): Promise<string> {
+  return await new Response(stream).text();
+}
+
+async function blobRead(pathname: string): Promise<string | null> {
+  try {
+    const { get } = await import("@vercel/blob");
+    const result = await get(pathname, { access: "private", useCache: false });
+    if (!result || result.statusCode !== 200 || !result.stream) return null;
+    return await streamText(result.stream);
+  } catch {
+    return null;
+  }
+}
+
+async function blobWrite(pathname: string, body: string): Promise<void> {
+  const { put } = await import("@vercel/blob");
+  await put(pathname, body, blobPutOpts);
+}
+
 async function ensureDir(): Promise<void> {
   await fs.mkdir(dataDir, { recursive: true });
 }
 
-async function readJson(): Promise<FileShape> {
+async function fileRead(name: string): Promise<string | null> {
   await ensureDir();
-  const full = path.join(dataDir, fileName);
   try {
-    const raw = await fs.readFile(full, "utf8");
+    return await fs.readFile(path.join(dataDir, name), "utf8");
+  } catch (err) {
+    const e = err as NodeJS.ErrnoException;
+    if (e.code === "ENOENT") return null;
+    throw err;
+  }
+}
+
+async function fileWrite(name: string, body: string): Promise<void> {
+  await ensureDir();
+  const full = path.join(dataDir, name);
+  const tmp = `${full}.${process.pid}.tmp`;
+  await fs.writeFile(tmp, body, "utf8");
+  await fs.rename(tmp, full);
+}
+
+async function readRaw(name: string): Promise<string | null> {
+  if (useBlobStore()) return blobRead(name);
+  return fileRead(name);
+}
+
+async function writeRaw(name: string, body: string): Promise<void> {
+  if (useBlobStore()) {
+    await blobWrite(name, body);
+    return;
+  }
+  await fileWrite(name, body);
+}
+
+function parseBookings(raw: string | null): FileShape {
+  if (!raw) return { bookings: [] };
+  try {
     const parsed = JSON.parse(raw) as FileShape;
     if (!parsed || !Array.isArray(parsed.bookings)) return { bookings: [] };
     return parsed;
-  } catch (err) {
-    const e = err as NodeJS.ErrnoException;
-    if (e.code === "ENOENT") return { bookings: [] };
-    throw err;
+  } catch {
+    return { bookings: [] };
   }
 }
 
-async function writeJson(data: FileShape): Promise<void> {
-  await ensureDir();
-  const full = path.join(dataDir, fileName);
-  const tmp = `${full}.${process.pid}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2) + "\n", "utf8");
-  await fs.rename(tmp, full);
-}
-
-async function readReviewsJson(): Promise<ReviewsFileShape> {
-  await ensureDir();
-  const full = path.join(dataDir, reviewsFileName);
+function parseReviews(raw: string | null): ReviewsFileShape {
+  if (!raw) return { reviews: [] };
   try {
-    const raw = await fs.readFile(full, "utf8");
     const parsed = JSON.parse(raw) as ReviewsFileShape;
     if (!parsed || !Array.isArray(parsed.reviews)) return { reviews: [] };
     return parsed;
-  } catch (err) {
-    const e = err as NodeJS.ErrnoException;
-    if (e.code === "ENOENT") return { reviews: [] };
-    throw err;
+  } catch {
+    return { reviews: [] };
   }
 }
 
-async function writeReviewsJson(data: ReviewsFileShape): Promise<void> {
-  await ensureDir();
-  const full = path.join(dataDir, reviewsFileName);
-  const tmp = `${full}.${process.pid}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2) + "\n", "utf8");
-  await fs.rename(tmp, full);
+async function readBookings(): Promise<FileShape> {
+  return parseBookings(await readRaw(bookingsFile));
+}
+
+async function writeBookings(data: FileShape): Promise<void> {
+  await writeRaw(bookingsFile, JSON.stringify(data, null, 2) + "\n");
+}
+
+async function readReviews(): Promise<ReviewsFileShape> {
+  return parseReviews(await readRaw(reviewsFile));
+}
+
+async function writeReviews(data: ReviewsFileShape): Promise<void> {
+  await writeRaw(reviewsFile, JSON.stringify(data, null, 2) + "\n");
+}
+
+function overlaps(bookings: Booking[], date: string, slotStarts: string[], exceptId?: string): boolean {
+  const want = new Set(slotStarts);
+  for (const b of bookings) {
+    if (b.date !== date) continue;
+    if (exceptId && b.id === exceptId) continue;
+    for (const s of b.slotStarts) {
+      if (want.has(s)) return true;
+    }
+  }
+  return false;
 }
 
 export class ConflictError extends Error {
@@ -79,12 +147,12 @@ export class ConflictError extends Error {
 }
 
 export async function listBookings(): Promise<Booking[]> {
-  const data = await readJson();
+  const data = await readBookings();
   return data.bookings;
 }
 
 export async function takenSlotStarts(date: string): Promise<string[]> {
-  const data = await readJson();
+  const data = await readBookings();
   const set = new Set<string>();
   for (const b of data.bookings) {
     if (b.date !== date) continue;
@@ -103,15 +171,6 @@ export async function createBooking(input: {
   notes: string;
 }): Promise<Booking> {
   return withLock(async () => {
-    const data = await readJson();
-    const occupied = new Set<string>();
-    for (const b of data.bookings) {
-      if (b.date !== input.date) continue;
-      for (const s of b.slotStarts) occupied.add(s);
-    }
-    for (const s of input.slotStarts) {
-      if (occupied.has(s)) throw new ConflictError();
-    }
     const booking: Booking = {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
@@ -123,14 +182,28 @@ export async function createBooking(input: {
       slotStarts: input.slotStarts,
       notes: input.notes,
     };
-    data.bookings.push(booking);
-    await writeJson(data);
-    return booking;
+
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const data = await readBookings();
+      if (overlaps(data.bookings, input.date, input.slotStarts)) {
+        throw new ConflictError();
+      }
+      data.bookings.push(booking);
+      await writeBookings(data);
+
+      const verify = await readBookings();
+      const mine = verify.bookings.some((b) => b.id === booking.id);
+      const clash = overlaps(verify.bookings, input.date, input.slotStarts, booking.id);
+      if (mine && !clash) return booking;
+      if (clash && mine) throw new ConflictError();
+    }
+
+    throw new ConflictError();
   });
 }
 
 export async function listStoredReviews(): Promise<Review[]> {
-  const data = await readReviewsJson();
+  const data = await readReviews();
   return data.reviews;
 }
 
@@ -141,7 +214,6 @@ export async function createReview(input: {
   stars: Review["stars"];
 }): Promise<Review> {
   return withLock(async () => {
-    const data = await readReviewsJson();
     const review: Review = {
       id: crypto.randomUUID(),
       name: input.name,
@@ -150,19 +222,28 @@ export async function createReview(input: {
       stars: input.stars,
       source: "shop",
     };
-    data.reviews.unshift(review);
-    await writeReviewsJson(data);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const data = await readReviews();
+      data.reviews.unshift(review);
+      await writeReviews(data);
+      const verify = await readReviews();
+      if (verify.reviews.some((r) => r.id === review.id)) return review;
+    }
     return review;
   });
 }
 
 export async function deleteReview(id: string): Promise<boolean> {
   return withLock(async () => {
-    const data = await readReviewsJson();
-    const next = data.reviews.filter((r) => r.id !== id);
-    if (next.length === data.reviews.length) return false;
-    data.reviews = next;
-    await writeReviewsJson(data);
-    return true;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const data = await readReviews();
+      const next = data.reviews.filter((r) => r.id !== id);
+      if (next.length === data.reviews.length) return false;
+      data.reviews = next;
+      await writeReviews(data);
+      const verify = await readReviews();
+      if (!verify.reviews.some((r) => r.id === id)) return true;
+    }
+    return false;
   });
 }

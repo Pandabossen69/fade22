@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useLang } from "./language-context";
 import { ContactStrip } from "./contact-strip";
 import { Reveal } from "./reveal";
-import { site } from "@/lib/site";
 import { services } from "@/lib/services";
 
 export function HomeView() {
@@ -15,42 +14,29 @@ export function HomeView() {
     <div>
       <section className="relative min-h-[100svh] overflow-hidden">
         <Image
-          src="/gallery/hero-shop.jpg"
+          src="/gallery/real-01.jpg"
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[center_42%] md:hidden"
-        />
-        <Image
-          src="/gallery/hero-interior.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="hidden object-cover object-[center_20%] md:block"
+          className="object-cover object-[center_35%]"
         />
         <div className="hero-scrim absolute inset-0" />
-        <div className="hero-copy relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col justify-end px-4 pb-16 pt-24">
-          <p className="kicker mb-5">{t("hours")}</p>
-          <h1 className="wordmark text-[10.5vw] leading-[0.92] text-[#f7f1e8] sm:text-6xl md:text-7xl">
+        <div className="hero-copy relative z-10 mx-auto flex min-h-[100svh] max-w-5xl flex-col justify-end px-4 pb-20 pt-24">
+          <h1 className="wordmark text-[11vw] leading-[0.92] text-[#f7f1e8] sm:text-6xl md:text-7xl">
             A DAY <span className="text-gold">CUTZ</span>
           </h1>
-          <p className="mt-3 text-base text-[#e8d9c4]">
-            {lang === "en" ? site.addressEn : site.lineTh}
-          </p>
-          <p className="mt-5 max-w-sm text-xl leading-snug text-[#f7f1e8] sm:text-2xl">{t("hero")}</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#d4c4ae]">{t("sub")}</p>
-          <div className="mt-9 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/book"
               data-hero-cta
-              className="focus-ring flex h-12 items-center justify-center bg-gold px-10 text-[13px] tracking-[0.22em] uppercase text-black"
+              className="focus-ring flex h-14 items-center justify-center bg-gold px-10 text-[14px] tracking-[0.22em] uppercase text-black"
             >
               {t("ctaPrimary")}
             </Link>
             <Link
               href="/gallery"
-              className="focus-ring flex h-12 items-center justify-center px-2 text-[12px] tracking-[0.2em] uppercase text-[#e8d9c4] hover:text-[#f7f1e8]"
+              className="focus-ring flex h-14 items-center justify-center border-2 border-[#f7f1e8] bg-black/25 px-10 text-[14px] tracking-[0.22em] uppercase text-[#f7f1e8] backdrop-blur-sm"
             >
               {t("ctaSecondary")}
             </Link>

@@ -13,6 +13,8 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const SRC = join(ROOT, 'src');
 const DIST = process.env.OUT_DIR || join(ROOT, 'dist');
 const SITE = (process.env.SITE_URL || 'https://adaycutz.vercel.app').replace(/\/$/, '');
+// Förslag tills butiken sagt ja: ingen indexering i Google (samma som våra andra demosidor). INDEXERA=true när sajten är hans.
+const INDEXERA = process.env.INDEXERA === 'true';
 const IMG = JSON.parse(readFileSync(join(SRC, 'img', 'img.json'), 'utf8'));
 const YEAR = new Date().getFullYear();
 
@@ -113,7 +115,7 @@ function layout(lang, P, body) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(P.title)}</title>
 <meta name="description" content="${esc(P.description)}">
-${P.noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${canonical}">
+${P.noindex || !INDEXERA ? '<meta name="robots" content="noindex">\n' : ''}${P.noindex ? '' : `<link rel="canonical" href="${canonical}">
 <link rel="alternate" hreflang="th" href="${thUrl}">
 <link rel="alternate" hreflang="en" href="${enUrl}">
 <link rel="alternate" hreflang="x-default" href="${thUrl}">`}
@@ -522,7 +524,7 @@ ${pages.filter((p) => !p.noindex).map((p) => `<url><loc>${SITE}${p.path}</loc><x
 </urlset>
 `;
 outputs.push(['sitemap.xml', sitemap]);
-outputs.push(['robots.txt', `User-agent: *\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${SITE}/sitemap.xml\n`]);
+outputs.push(['robots.txt', INDEXERA ? `User-agent: *\nDisallow: /admin/\nDisallow: /api/\nSitemap: ${SITE}/sitemap.xml\n` : 'User-agent: *\nDisallow: /\n']);
 outputs.push(['speculation.json', JSON.stringify({ prerender: [{ where: { and: [{ href_matches: '/*' }, { not: { href_matches: '/admin/*' } }, { not: { selector_matches: '[target=_blank], [download]' } }] }, eagerness: 'moderate' }] }) + '\n']);
 outputs.push(['site.webmanifest', JSON.stringify({ name: shop.name, short_name: shop.name, start_url: '/', display: 'standalone', background_color: '#0b0b0c', theme_color: '#0b0b0c', icons: [{ src: '/img/icon-512.png', sizes: '512x512', type: 'image/png' }] }) + '\n']);
 
@@ -536,4 +538,4 @@ writeFileSync(join(DIST, CSS), cssText);
 mkdirSync(join(DIST, 'img'), { recursive: true });
 for (const f of imgFiles) if (f !== 'img.json') copyFileSync(join(SRC, 'img', f), join(DIST, 'img', f));
 copyFileSync(join(SRC, 'img', 'apple-touch-icon.png'), join(DIST, 'apple-touch-icon.png'));
-console.log(`Klart: ${outputs.length} filer + ${files.length} tillgångar → ${DIST} (${SITE})`);
+console.log(`Klart: ${outputs.length} filer + ${files.length} tillgångar → ${DIST} (${SITE}, ${INDEXERA ? 'indexeras' : 'noindex: förslag'})`);

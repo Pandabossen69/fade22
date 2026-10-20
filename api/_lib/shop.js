@@ -34,7 +34,7 @@ export const services = [
   { id: 'thai', th: 'ตัดผมชาย (คนไทย)', en: 'Haircut (Thai nationals)', price: 120, regular: 150, min: 30 },
   { id: 'foreigner', th: 'ตัดผมชาย (ต่างชาติ)', en: 'Haircut', price: 150, regular: 200, min: 30 },
   { id: 'kids', th: 'ตัดผมเด็ก', en: 'Kids cut', price: 100, regular: 120, min: 30 },
-  { id: 'wash', th: 'สระ + เซ็ต', en: 'Wash & style', price: 80, regular: null, min: 30 },
+  { id: 'wash', th: 'ตัดผม + สระ', en: 'Haircut & wash', price: 200, regular: 250, min: 45 },
 ];
 
 // Står på butikens skylt utan pris: visas som "fråga i butiken", kan inte bokas online.

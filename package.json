@@ -1,27 +1,19 @@
 {
-  "name": "barber-site",
-  "version": "1.0.0",
+  "name": "adaycutz",
+  "version": "2.0.0",
   "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
   "scripts": {
-    "dev": "next dev --turbopack -H 0.0.0.0 -p 3000",
-    "build": "next build",
-    "start": "next start -H 0.0.0.0 -p 3000",
-    "lint": "next lint"
+    "build": "node build.mjs",
+    "dev": "node tools/dev.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "images": "node tools/images.mjs"
   },
   "dependencies": {
-    "@vercel/blob": "^2.8.0",
-    "next": "^15.4.6",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@vercel/blob": "^2.8.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "^15.4.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "sharp": "^0.34.0"
   }
 }

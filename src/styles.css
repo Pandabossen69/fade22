@@ -139,12 +139,16 @@ p { margin: 0 0 1em; }
   .hero { grid-template-columns: 1fr 1fr; min-height: min(86svh, 760px); }
   .hero-media { order: 2; height: auto; }
   .hero-media::after { background: linear-gradient(90deg, var(--ink) 0%, rgba(11, 11, 12, 0.35) 22%, rgba(11, 11, 12, 0) 45%); }
-  .hero-copy { margin: 0; align-self: center; justify-self: end; padding: 72px 48px 72px max(16px, calc((100vw - var(--wrap)) / 2)); width: 100%; max-width: calc(var(--wrap) / 2 + 48px); }
+  /* Vänsterkanten linjerar med .wrap; textspalten är halva skärmen minus den kanten (tidigare blev den 160 px på 1920 px). */
+  .hero-copy { margin: 0; align-self: center; width: 100%; max-width: none; padding: 72px clamp(32px, 4vw, 64px) 72px max(24px, calc((100vw - var(--wrap)) / 2)); }
+  .hero-copy > * { max-width: 560px; }
+  .hero-title { font-size: clamp(4rem, 6.2vw, 6.6rem); }
 }
 
 /* Sektioner */
 .sec { padding: clamp(64px, 10vw, 112px) 0; }
 .sec h2 { max-width: 24ch; }
+@media (min-width: 600px) { .nw { white-space: nowrap; } .sec h2 { max-width: 30ch; } }
 .sec-soft { background: var(--soft); }
 .sec-dark { position: relative; background: var(--ink); color: var(--on-dark); }
 .sec-dark::before { content: ""; position: absolute; inset: 0; background: var(--hex); pointer-events: none; }

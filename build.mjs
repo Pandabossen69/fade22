@@ -22,6 +22,8 @@ function stop(msg) { console.error(`BYGGET STOPPADES: ${msg}`); process.exit(1);
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const md = (s) => esc(s).replace(/\{\{([^|]+)\|([^}]+)\}\}/g, (_, t, h) => `<a href="${h}">${t}</a>`);
 const baht = (n) => `฿${n}`;
+// Rubriker: på bredare skärmar bryts raden bara vid mellanslagen (thai saknar ordmellanrum, så annars kan ett ord delas).
+const ph = (s) => esc(s).split(' ').map((w) => `<span class="nw">${w}</span>`).join(' ');
 
 // Hashade filer: ny adress när innehållet ändras, så de kan cachas i ett år.
 const files = [];
@@ -214,7 +216,7 @@ function home(lang) {
 <section class="sec" id="prices">
   <div class="wrap">
     <p class="kicker">${L.pricesKicker}</p>
-    <h2>${L.pricesTitle}</h2>
+    <h2>${ph(L.pricesTitle)}</h2>
     <ul class="prices">${svc}
     </ul>
     <div class="extras">
@@ -228,7 +230,7 @@ function home(lang) {
 <section class="sec sec-dark" id="work">
   <div class="wrap">
     <p class="kicker">${L.workKicker}</p>
-    <h2>${L.workTitle}</h2>
+    <h2>${ph(L.workTitle)}</h2>
     <p class="lead">${L.workLead}</p>
     <ul class="cuts" data-cuts>${cuts}
     </ul>
@@ -246,7 +248,7 @@ function home(lang) {
   <div class="wrap shop">
     <div class="shop-copy">
       <p class="kicker">${L.shopKicker}</p>
-      <h2>${L.shopTitle}</h2>
+      <h2>${ph(L.shopTitle)}</h2>
       <p class="lead">${L.shopText}</p>
       <ul class="ticks">${L.shopPoints.map((p) => `<li>${I.check}${p}</li>`).join('')}</ul>
       <a class="link" href="${shop.tiktok}" rel="noopener" target="_blank">${I.tiktok}${L.tiktok}</a>
@@ -261,7 +263,7 @@ function home(lang) {
 <section class="sec sec-soft" id="how">
   <div class="wrap">
     <p class="kicker">${L.howKicker}</p>
-    <h2>${L.howTitle}</h2>
+    <h2>${ph(L.howTitle)}</h2>
     <ol class="how">${L.how.map(([t, d], i) => `<li><span class="how-n">${i + 1}</span><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol>
     <p class="note">${L.late}</p>
   </div>
@@ -271,7 +273,7 @@ function home(lang) {
   <div class="wrap visit">
     <div>
       <p class="kicker">${L.visitKicker}</p>
-      <h2>${L.visitTitle}</h2>
+      <h2>${ph(L.visitTitle)}</h2>
       <dl class="facts">
         <div><dt>${I.pin}${L.address}</dt><dd>${esc(shop.address[lang])}<br><span class="muted">${shop.landmark[lang]}</span></dd></div>
         <div><dt>${I.clock}${L.openingHours}</dt><dd>${L.everyDay} ${shop.open}–${shop.close}</dd></div>
@@ -288,7 +290,7 @@ function home(lang) {
 
 <section class="cta">
   <div class="wrap cta-in">
-    <h2>${L.ctaTitle}</h2>
+    <h2>${ph(L.ctaTitle)}</h2>
     <p>${L.ctaText}</p>
     <a class="btn btn-y btn-lg" href="${H.book}">${L.bookOnline}${I.arrow}</a>
   </div>

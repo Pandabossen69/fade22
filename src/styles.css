@@ -104,9 +104,13 @@ p { margin: 0 0 1em; }
 .nav { display: none; margin-left: auto; gap: 4px; }
 .nav a { text-decoration: none; padding: 10px 12px; border-radius: 8px; color: var(--on-dark-muted); font-weight: 600; font-size: 0.97rem; }
 .nav a:hover { color: #fff; background: rgba(255, 255, 255, 0.07); }
-.lang { margin-left: auto; text-decoration: none; font: 600 0.9rem/1 var(--head); letter-spacing: 0.08em; padding: 11px 10px; color: var(--on-dark-muted); border-radius: 8px; }
-.lang:hover { color: #fff; }
+.lang { margin-left: auto; display: flex; gap: 4px; }
 .nav + .lang { margin-left: 0; }
+.lang a { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 8px; border: 2px solid transparent; opacity: 0.55; transition: opacity 0.15s, border-color 0.15s; }
+.lang a:hover { opacity: 1; }
+.lang a[aria-current="page"] { opacity: 1; border-color: var(--y); }
+.lang a:focus-visible { outline: 3px solid var(--y); outline-offset: 2px; }
+.flag { width: 26px; height: 18px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
 @media (min-width: 900px) { .nav { display: flex; } }
 
 /* Hero */
@@ -369,4 +373,13 @@ p { margin: 0 0 1em; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
   @view-transition { navigation: none; }
+}
+
+/* Smala telefoner (320 px): språkflaggorna och bokningsknappen får plats i headern. */
+@media (max-width: 359px) {
+  .top-in { gap: 8px; }
+  .brand { font-size: 0.95rem; gap: 8px; }
+  .lang { gap: 2px; }
+  .lang a { width: 36px; height: 40px; }
+  .top .btn-sm { padding: 0 12px; font-size: 0.9rem; }
 }

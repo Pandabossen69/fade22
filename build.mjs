@@ -22,6 +22,9 @@ function stop(msg) { console.error(`BYGGET STOPPADES: ${msg}`); process.exit(1);
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const md = (s) => esc(s).replace(/\{\{([^|]+)\|([^}]+)\}\}/g, (_, t, h) => `<a href="${h}">${t}</a>`);
 const baht = (n) => `฿${n}`;
+// Flaggor som inline-SVG (ingen bild att ladda, syns även när emoji-flaggor saknas på Windows).
+const FLAG_TH = '<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#A51931"/><rect y="3.33" width="30" height="13.34" fill="#F4F5F8"/><rect y="6.67" width="30" height="6.66" fill="#2D2A4A"/></svg>';
+const FLAG_EN = '<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#012169"/><path d="M0 0 30 20M30 0 0 20" stroke="#fff" stroke-width="4"/><path d="M0 0 30 20M30 0 0 20" stroke="#C8102E" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#C8102E" stroke-width="3.6"/></svg>';
 // Rubriker: på bredare skärmar bryts raden bara vid mellanslagen (thai saknar ordmellanrum, så annars kan ett ord delas).
 const ph = (s) => esc(s).split(' ').map((w) => `<span class="nw">${w}</span>`).join(' ');
 
@@ -106,12 +109,14 @@ function layout(lang, P, body) {
   const onHome = P.path === L.home;
   const a = (id) => (onHome ? `#${id}` : `${L.home}#${id}`);
   const canonical = `${SITE}${P.path}`;
-  const langHref = P.langHref || otherPath(lang, P.path);
-  const alt = `${SITE}${langHref}`;
+  // Samma sida på båda språken (t.ex. /book/ ↔ /en/book/). Startsidan: / ↔ /en/.
+  const thHref = lang === 'th' ? (P.thHref || P.path) : (P.langHref || P.path.replace(/^\/en/, '') || '/');
+  const enHref = lang === 'en' ? P.path : (P.langHref || `/en${P.path}`);
+  const alt = `${SITE}${lang === 'th' ? enHref : thHref}`;
   const thUrl = lang === 'th' ? canonical : alt;
   const enUrl = lang === 'en' ? canonical : alt;
   return `<!doctype html>
-<html lang="${L.htmlLang}">
+<html lang="${L.htmlLang}" translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -121,6 +126,7 @@ ${P.noindex || !INDEXERA ? '<meta name="robots" content="noindex">\n' : ''}${P.n
 <link rel="alternate" hreflang="th" href="${thUrl}">
 <link rel="alternate" hreflang="en" href="${enUrl}">
 <link rel="alternate" hreflang="x-default" href="${thUrl}">`}
+<meta name="google" content="notranslate">
 <meta name="theme-color" content="#0b0b0c">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${shop.name}">
@@ -148,7 +154,10 @@ ${P.home ? jsonLd() : ''}
     <nav class="nav" aria-label="${L.menu}">
       <a href="${a('prices')}">${L.nav.prices}</a><a href="${a('work')}">${L.nav.work}</a><a href="${a('shop')}">${L.nav.shop}</a><a href="${a('visit')}">${L.nav.visit}</a>
     </nav>
-    <a class="lang" href="${langHref}" hreflang="${lang === 'th' ? 'en' : 'th'}" lang="${lang === 'th' ? 'en' : 'th'}" title="${L.langOtherName}">${L.langOther}</a>
+    <nav class="lang" aria-label="${lang === 'th' ? 'เลือกภาษา' : 'Choose language'}">
+      <a href="${thHref}" hreflang="th" lang="th" aria-label="ภาษาไทย"${lang === 'th' ? ' aria-current="page"' : ''}>${FLAG_TH}</a>
+      <a href="${enHref}" hreflang="en" lang="en" aria-label="English"${lang === 'en' ? ' aria-current="page"' : ''}>${FLAG_EN}</a>
+    </nav>
     ${P.path === H.book ? '' : `<a class="btn btn-y btn-sm" href="${H.book}">${L.nav.book}</a>`}
   </div>
 </header>
@@ -167,7 +176,7 @@ ${body}
       <li>${I.phone}<a href="tel:${shop.phoneTel}">${shop.phoneDisplay}</a></li>
       <li>${I.tiktok}<a href="${shop.tiktok}" rel="noopener" target="_blank">@a.day.cutz</a></li>
     </ul>
-    <p class="foot-small">© ${YEAR} ${shop.name} · <a href="${H.privacy}">${L.privacy}</a> · <a href="${langHref}" hreflang="${lang === 'th' ? 'en' : 'th'}">${L.langOtherName}</a></p>
+    <p class="foot-small">© ${YEAR} ${shop.name} · <a href="${H.privacy}">${L.privacy}</a> · <a href="${lang === 'th' ? enHref : thHref}" hreflang="${lang === 'th' ? 'en' : 'th'}" lang="${lang === 'th' ? 'en' : 'th'}">${L.langOtherName}</a></p>
   </div>
 </footer>
 ${P.path === H.book || P.noBar ? '' : `<div class="bar" data-bar>
@@ -414,10 +423,11 @@ function notFound() {
 
 function adminPage() {
   return `<!doctype html>
-<html lang="th">
+<html lang="th" translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="google" content="notranslate">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b0b0c">
 <title>คิวของร้าน · A DAY CUTZ</title>
@@ -493,7 +503,7 @@ for (const P of pages) {
   const html = layout(P.lang, P, P.body);
   outputs.push([join(P.path.slice(1), 'index.html'), html]);
 }
-outputs.push(['404.html', layout('th', { path: '/404/', langHref: '/en/', title: T.th.notFoundTitle, description: T.th.notFoundTitle, noindex: true }, notFound())]);
+outputs.push(['404.html', layout('th', { path: '/404/', thHref: '/', langHref: '/en/', title: T.th.notFoundTitle, description: T.th.notFoundTitle, noindex: true }, notFound())]);
 outputs.push([join('admin', 'index.html'), adminPage()]);
 
 // Kontroller (samma anda som nextstepwebsites.se): bygget stoppar hellre än publicerar något trasigt.
